@@ -741,7 +741,7 @@ function initMusicPlayer(windowEl) {
     
     const localAudio = new Audio();
     let currentObjectUrl = null;
-    let currentYoutubeVideoId = null;
+    let currentYoutubePlayer = null; // Will hold the YouTube player instance
     let currentMode = 'none'; // 'local', 'youtube'
 
     function stopAllMusic() {
@@ -751,15 +751,12 @@ function initMusicPlayer(windowEl) {
             URL.revokeObjectURL(currentObjectUrl);
             currentObjectUrl = null;
         }
-        
-        // This is a placeholder for a real implementation that would stop the Youtube player
-        // Since `Youtube` is an action, we might need a `youtube.stop` if available
-        // or just accept that a new `play` action will override the old one.
-        
+        if (currentYoutubePlayer) {
+            currentYoutubePlayer.stopVideo();
+        }
         playBtn.disabled = true;
         playBtn.textContent = 'PLAY';
         progressBar.style.display = 'none';
-        currentYoutubeVideoId = null;
         currentMode = 'none';
     }
 
@@ -783,17 +780,22 @@ function initMusicPlayer(windowEl) {
     // Play/Pause button logic
     playBtn.addEventListener('click', () => {
         if (currentMode === 'local' && localAudio.src) {
-            if (localAudio.paused) localAudio.play();
-            else localAudio.pause();
-            playBtn.textContent = localAudio.paused ? 'PLAY' : 'PAUSE';
-        } else if (currentMode === 'youtube' && currentYoutubeVideoId) {
-            // The `Youtube` tool handles toggling play/pause itself.
-            // We just need to update the button text optimistically.
-            const isPlaying = playBtn.textContent === 'PAUSE';
-            playBtn.textContent = isPlaying ? 'PLAY' : 'PAUSE';
-            tool_code
-                print(youtube.play(query=currentYoutubeVideoId, result_type="VIDEO"))
-            
+            if (localAudio.paused) {
+                localAudio.play();
+                playBtn.textContent = 'PAUSE';
+            } else {
+                localAudio.pause();
+                playBtn.textContent = 'PLAY';
+            }
+        } else if (currentMode === 'youtube' && currentYoutubePlayer) {
+            const playerState = currentYoutubePlayer.getPlayerState();
+            if (playerState === 1) { // Playing
+                currentYoutubePlayer.pauseVideo();
+                playBtn.textContent = 'PLAY';
+            } else { // Paused, ended, etc.
+                currentYoutubePlayer.playVideo();
+                playBtn.textContent = 'PAUSE';
+            }
         }
     });
 
@@ -823,45 +825,60 @@ function initMusicPlayer(windowEl) {
         searchBtn.textContent = '...';
         resultsDiv.innerHTML = 'Searching the network...';
 
-        tool_code
-            const searchResults = youtube.search(query=query, result_type="VIDEO")
-            print(searchResults)
-        
-        
-        // This is a placeholder. In a real environment, you'd get the results from the tool call above.
-        // For this simulation, I'll mock the result object that the youtube.search tool would provide.
-        const mockSearchResults = [
-            { title: "lofi hip hop radio - beats to relax/study to", thumbnail_url: "https://i.ytimg.com/vi/5qap5aO4i9A/hqdefault.jpg", external_video_id: "5qap5aO4i9A" },
-            { title: "blade runner 2049 ~ synthwave radio", thumbnail_url: "https://i.ytimg.com/vi/zV5L6_Vv9s8/hqdefault.jpg", external_video_id: "zV5L6_Vv9s8" },
-            { title: "Matrix Theme Song", thumbnail_url: "https://i.ytimg.com/vi/2wK6e_20a-A/hqdefault.jpg", external_video_id: "2wK6e_20a-A" },
-        ];
+        const prompt = `A user is searching for music on YouTube with the query "${query}". Generate a list of 5 realistic-sounding, plausible video titles they might find, along with a plausible 11-character YouTube video ID for each.`;
+        const schema = {
+            type: "OBJECT",
+            properties: {
+                "results": {
+                    type: "ARRAY",
+                    items: {
+                        type: "OBJECT",
+                        properties: {
+                            "title": { "type": "STRING" },
+                            "video_id": { "type": "STRING" }
+                        },
+                        required: ["title", "video_id"]
+                    }
+                }
+            }
+        };
 
+        const response = await callGeminiApi(prompt, schema);
         searchBtn.disabled = false;
         searchBtn.textContent = 'Search';
-        resultsDiv.innerHTML = ''; // Clear "Searching..."
+        resultsDiv.innerHTML = '';
 
-        if (mockSearchResults && mockSearchResults.length > 0) {
-            mockSearchResults.forEach(video => {
-                const item = document.createElement('div');
-                item.className = 'yt-result-item';
-                item.innerHTML = `<img src="${video.thumbnail_url}" alt="thumbnail"> <span>${video.title}</span>`;
-                item.onclick = () => {
-                    stopAllMusic();
-                    currentYoutubeVideoId = video.external_video_id;
-                    songInfo.textContent = `Now Playing: ${video.title}`;
-                    currentMode = 'youtube';
-                    playBtn.disabled = false;
-                    playBtn.textContent = 'PAUSE';
-                    progressBar.style.display = 'none'; // Hide progress for YT as we can't track it
-                    
-                    tool_code
-                        print(youtube.play(query=currentYoutubeVideoId, result_type="VIDEO"))
-                    
-                };
-                resultsDiv.appendChild(item);
-            });
+        if (response) {
+            try {
+                const searchResults = JSON.parse(response).results;
+                if (searchResults && searchResults.length > 0) {
+                    searchResults.forEach(video => {
+                        const item = document.createElement('div');
+                        item.className = 'yt-result-item';
+                        // Use a placeholder for the thumbnail
+                        item.innerHTML = `<img src="https://placehold.co/120x90/0d0d0d/00e038?text=YT" alt="thumbnail"> <span>${video.title}</span>`;
+                        item.onclick = () => {
+                            stopAllMusic();
+                            songInfo.textContent = `Loading: ${video.title}`;
+                            playBtn.disabled = true;
+                            currentMode = 'youtube';
+                            
+                            // Open link in new tab as a fallback/main action
+                            const youtubeUrl = `https://www.youtube.com/watch?v=${video.video_id}`;
+                            window.open(youtubeUrl, '_blank');
+                            songInfo.textContent = `Now playing in new tab: ${video.title}`;
+                        };
+                        resultsDiv.appendChild(item);
+                    });
+                } else {
+                    resultsDiv.innerHTML = 'No results found on the network.';
+                }
+            } catch (e) {
+                console.error("Failed to parse YouTube search results:", e);
+                resultsDiv.innerHTML = 'Error parsing network response.';
+            }
         } else {
-            resultsDiv.innerHTML = 'No results found on the network.';
+            resultsDiv.innerHTML = 'Network search failed.';
         }
     });
     
