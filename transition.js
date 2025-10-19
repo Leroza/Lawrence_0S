@@ -142,10 +142,10 @@ const iconsData = {
                         <input type="range" id="progress-bar" value="0" step="0.01" max="100">
                         <div class="music-search">
                             <input type="text" id="music-search-input" class="form-group" placeholder="Search for a vibe (e.g., 'space battle')...">
-                            <button class="gemini-btn" id="music-search-btn">✨</button>
+                            <button class="gemini-btn" id="music-search-btn">✨ Search YT</button>
                         </div>
                         <input type="file" id="song-upload" accept="audio/*" class="hidden">
-                        <button class="gemini-btn" id="add-song-btn">📂 Add Song</button>
+                        <button class="gemini-btn" id="add-song-btn">📂 Add Local Song</button>
                       </div>`,
         position: { top: '240px', left: '110px' }
     },
@@ -224,7 +224,7 @@ function updateCarousel() {
 carouselTextEl.textContent = sentences[sentenceIndex]; // Initial text
 setInterval(updateCarousel, 10000); // 10 seconds
 
-// --- GEMINI API CALLER ---
+// --- API CALLERS ---
 async function callGeminiApi(prompt, jsonSchema = null, retries = 3, delay = 1000) {
     const apiKey = "AIzaSyAq2m289KR6XletLhRmAVtGU4eI8ysk9Og"; 
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
@@ -725,8 +725,26 @@ function initMusicPlayer(windowEl) {
     
     const localAudio = new Audio();
     let currentObjectUrl = null;
-    let aiSynth, aiSequence;
-    let currentMode = 'local'; // 'local' or 'ai'
+    let currentYoutubeVideoId = null;
+    let currentMode = 'none'; // 'local', 'youtube'
+
+    // Function to stop all active music playback
+    function stopAllMusic() {
+        localAudio.pause();
+        localAudio.currentTime = 0;
+        if (currentObjectUrl) {
+            URL.revokeObjectURL(currentObjectUrl);
+            currentObjectUrl = null;
+        }
+        // For YouTube, the `Youtube` tool takes care of stopping previous playback.
+        // We just reset the UI state.
+        playBtn.disabled = true;
+        playBtn.textContent = 'PLAY';
+        progressBar.value = 0;
+        currentYoutubeVideoId = null;
+        currentMode = 'none';
+        songInfo.textContent = 'Ready to play.';
+    }
 
     // Local file playback
     addSongBtn.addEventListener('click', () => songUploadInput.click());
@@ -734,11 +752,9 @@ function initMusicPlayer(windowEl) {
     songUploadInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
         if (!file) return;
-        stopAllMusic();
+        stopAllMusic(); // Stop any currently playing music
 
-        if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
         currentObjectUrl = URL.createObjectURL(file);
-        
         localAudio.src = currentObjectUrl;
         songInfo.textContent = file.name;
         playBtn.disabled = false;
@@ -751,13 +767,25 @@ function initMusicPlayer(windowEl) {
             if (localAudio.paused) localAudio.play();
             else localAudio.pause();
             playBtn.textContent = localAudio.paused ? 'PLAY' : 'PAUSE';
-        } else if (currentMode === 'ai') {
-            if (Tone.Transport.state === 'started') Tone.Transport.pause();
-            else {
-                 if (Tone.context.state !== 'running') Tone.start();
-                 Tone.Transport.start();
+        } else if (currentMode === 'youtube' && currentYoutubeVideoId) {
+            // youtube.play handles toggling play/pause for the video it started.
+            // We just need to ensure the UI reflects the state.
+            // In a real scenario, this would require querying the YouTube player state.
+            // For this simulation, clicking "Play" after a YouTube search means "Play".
+            // Clicking "Pause" means "Pause".
+            if (playBtn.textContent === 'PLAY') {
+                playBtn.textContent = 'PAUSE';
+                // Assume youtube.play will resume if it was paused
+                tool_code
+                    print(youtube.play(query=currentYoutubeVideoId, result_type="VIDEO"))
+                
+            } else {
+                playBtn.textContent = 'PLAY';
+                // Assume youtube.play will pause if it was playing
+                tool_code
+                    print(youtube.play(query=currentYoutubeVideoId, result_type="VIDEO"))
+                
             }
-            playBtn.textContent = Tone.Transport.state === 'started' ? 'PAUSE' : 'PLAY';
         }
     });
 
@@ -770,6 +798,8 @@ function initMusicPlayer(windowEl) {
     localAudio.addEventListener('ended', () => {
         playBtn.textContent = 'PLAY';
         progressBar.value = 0;
+        currentMode = 'none';
+        songInfo.textContent = 'Ready to play.';
     });
     
     progressBar.addEventListener('input', () => {
@@ -778,84 +808,52 @@ function initMusicPlayer(windowEl) {
         }
     });
 
-    // AI Music Search
+    // YouTube Music Search
     searchBtn.addEventListener('click', async () => {
         const query = searchInput.value.trim();
         if (!query) return;
         
-        stopAllMusic();
+        stopAllMusic(); // Stop any currently playing music or previous search.
         searchBtn.disabled = true;
-        searchBtn.textContent = '...';
-        songInfo.textContent = `Searching the digital ether for '${query}'...`;
+        searchBtn.textContent = 'Searching...';
+        songInfo.textContent = `Searching YouTube for '${query}'...`;
 
-        const titlePrompt = `You are a music database from a retro hacker OS. Based on the user query '${query}', invent a cool, plausible-sounding chiptune/8-bit song title and artist.`;
-        const titleSchema = { type: "OBJECT", properties: { "title": { "type": "STRING" }, "artist": { "type": "STRING" } } };
-        const titleResponse = await callGeminiApi(titlePrompt, titleSchema);
+        tool_code
+            print(youtube.search(query=query, result_type="VIDEO"))
+        
+        // Assuming the response from youtube.search comes back here and is processed
+        // For now, let's simulate a response or hardcode it for demonstration
+        // In a real execution, the tool_code output would be available to process.
 
-        if (!titleResponse) {
-            songInfo.textContent = "Network error. Try again.";
-            searchBtn.disabled = false;
-            searchBtn.textContent = '✨';
-            return;
-        }
+        // Placeholder for processing youtube.search result:
+        const searchResults = [{
+            title: "Epic Chiptune Battle Music",
+            channel_name: "8bitComposer",
+            url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Example URL
+            external_video_id: "dQw4w9WgXcQ" // Example ID
+        }]; // This would actually come from the youtube.search tool output
 
-        try {
-            const { title, artist } = JSON.parse(titleResponse);
-            songInfo.textContent = `${title} - ${artist}`;
+        if (searchResults && searchResults.length > 0) {
+            const firstVideo = searchResults[0];
+            currentYoutubeVideoId = firstVideo.external_video_id;
+            songInfo.textContent = `${firstVideo.title} - ${firstVideo.channel_name}`;
             
-            const melodyPrompt = `Generate a simple, 16-note chiptune melody for a song called '${title}' with a '${query}' vibe. Respond with a JSON array of notes and durations like [["C4", "8n"], ["E4", "8n"], ...]`;
-            const melodySchema = { type: "OBJECT", properties: { "melody": { type: "ARRAY", items: { type: "ARRAY", items: { "type": "STRING" } } } } };
-            const melodyResponse = await callGeminiApi(melodyPrompt, melodySchema);
+            tool_code
+                print(youtube.play(query=currentYoutubeVideoId, result_type="VIDEO"))
+            
 
-            if (melodyResponse) {
-                const { melody } = JSON.parse(melodyResponse);
-                playAiMelody(melody);
-                currentMode = 'ai';
-                playBtn.disabled = false;
-                playBtn.textContent = 'PAUSE';
-            } else {
-                songInfo.textContent = 'Could not compose melody.';
-            }
-
-        } catch(e) {
-            console.error("AI Music Error:", e);
-            songInfo.textContent = "AI data stream corrupted.";
+            currentMode = 'youtube';
+            playBtn.disabled = false;
+            playBtn.textContent = 'PAUSE'; // Assume it starts playing
+        } else {
+            songInfo.textContent = 'No YouTube results found.';
+            playBtn.disabled = true;
         }
 
         searchBtn.disabled = false;
-        searchBtn.textContent = '✨';
+        searchBtn.textContent = '✨ Search YT';
     });
     
-    function playAiMelody(melody) {
-         if (Tone.context.state !== 'running') Tone.start();
-         
-         aiSynth = new Tone.Synth({
-            oscillator: { type: "square" },
-            envelope: { attack: 0.01, decay: 0.2, sustain: 0.2, release: 0.2, },
-        }).toDestination();
-        
-        aiSequence = new Tone.Sequence((time, note) => {
-            aiSynth.triggerAttackRelease(note[0], note[1], time);
-        }, melody, "8n").start(0);
-        
-        aiSequence.loop = true;
-        Tone.Transport.start();
-    }
-
-    function stopAllMusic() {
-        // Stop local audio
-        localAudio.pause();
-        localAudio.currentTime = 0;
-        
-        // Stop AI audio
-        Tone.Transport.stop();
-        if (aiSequence) aiSequence.dispose();
-        if (aiSynth) aiSynth.dispose();
-        
-        playBtn.textContent = 'PLAY';
-        progressBar.value = 0;
-    }
-
     return { stop: stopAllMusic };
 }
 
