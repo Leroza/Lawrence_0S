@@ -1,3 +1,16 @@
+// --- DYNAMIC STYLE INJECTION ---
+(function() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .yt-result-item { display: flex; align-items: center; gap: 10px; padding: 5px; cursor: pointer; border-bottom: 1px solid var(--dark-green); }
+        .yt-result-item:hover { background: rgba(0, 224, 56, 0.1); }
+        .yt-result-item img { width: 64px; height: 48px; object-fit: cover; border: 1px solid var(--dark-green); }
+        .yt-result-item span { font-size: 14px; white-space: normal; }
+        .music-player-container .youtube-results { height: 150px; overflow-y: auto; border: 1px solid var(--main-green); margin-top: 10px; padding: 5px; }
+    `;
+    document.head.appendChild(style);
+})();
+
 const desktop = document.getElementById('desktop');
 const taskbarApps = document.getElementById('taskbar-apps');
 const startButton = document.getElementById('start-button');
@@ -136,14 +149,15 @@ const iconsData = {
         content: `<div class="music-player-container">
                         <h3>> Now Playing</h3>
                         <div class="song-info">
-                            <p>Ready to play.</p>
+                            <p>Search YouTube or add a local file.</p>
                         </div>
-                        <button id="play-pause-btn" disabled>PLAY</button>
-                        <input type="range" id="progress-bar" value="0" step="0.01" max="100">
                         <div class="music-search">
-                            <input type="text" id="music-search-input" class="form-group" placeholder="Search for a vibe (e.g., 'space battle')...">
-                            <button class="gemini-btn" id="music-search-btn">✨ Search YT</button>
+                            <input type="text" id="music-search-input" class="form-group" placeholder="Search YouTube...">
+                            <button class="gemini-btn" id="music-search-btn">Search</button>
                         </div>
+                        <div class="youtube-results"></div>
+                        <button id="play-pause-btn" disabled>PLAY</button>
+                        <input type="range" id="progress-bar" value="0" step="0.01" max="100" style="display:none;">
                         <input type="file" id="song-upload" accept="audio/*" class="hidden">
                         <button class="gemini-btn" id="add-song-btn">📂 Add Local Song</button>
                       </div>`,
@@ -914,4 +928,3 @@ function init() {
 }
 
 init();
-
