@@ -169,31 +169,18 @@
             min-height: 100vh; /* Set all main sections to full viewport height */
         }
 
-        /* --- CUSTOM CURSOR STYLES --- */
-
-        /* Pulsate Animation for Main Bubble */
+        /* --- CUSTOM CURSOR STYLES (Existing Logic) --- */
         @keyframes pulse-ring {
-            0% {
-                transform: scale(0.6);
-                opacity: 0.8;
-            }
-            50% {
-                transform: scale(1.1);
-                opacity: 0.3;
-            }
-            100% {
-                transform: scale(0.6);
-                opacity: 0.8;
-            }
+            0% { transform: scale(0.6); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+            100% { transform: scale(0.6); opacity: 0.8; }
         }
-
         #cursor-bubble {
             transition: opacity 0.3s ease;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-
         #cursor-bubble:before {
             content: '';
             position: absolute;
@@ -204,19 +191,10 @@
             animation: pulse-ring 2s infinite ease-in-out;
             opacity: 0.6;
         }
-        
-        /* Trail Bubble Fade Animation */
         @keyframes trailFadeOut {
-            0% {
-                transform: translate(0, 0) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(calc(var(--rand-x) * 1px), calc(var(--rand-y) * 1px)) scale(0);
-                opacity: 0;
-            }
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(calc(var(--rand-x) * 1px), calc(var(--rand-y) * 1px)) scale(0); opacity: 0; }
         }
-        /* Class applied to the generated trail elements */
         .trail-bubble {
             position: fixed;
             border-radius: 50%;
@@ -224,22 +202,20 @@
             opacity: 0.8;
             pointer-events: none;
             animation: trailFadeOut 0.5s ease-out forwards;
-            z-index: 99; /* Below the main bubble */
+            z-index: 99;
         }
         
         /* --- DYNAMIC ORB STYLES --- */
-
-        /* The orb element itself */
         #orb-of-wonder {
             position: fixed;
-            z-index: 50; /* Above regular content but below main cursor */
+            z-index: 50;
             cursor: grab;
-            touch-action: none; /* Crucial for drag events on touchscreens */
-            background: radial-gradient(circle at 30% 30%, #4f46e5, var(--color-text)); /* Blue/Purple gradient */
-            box-shadow: 0 0 15px rgba(79, 70, 229, 0.8), 0 0 30px rgba(79, 70, 229, 0.5); /* Outer glow */
+            touch-action: none;
+            background: radial-gradient(circle at 30% 30%, #4f46e5, var(--color-text));
+            box-shadow: 0 0 15px rgba(79, 70, 229, 0.8), 0 0 30px rgba(79, 70, 229, 0.5);
             border-radius: 50%;
             /* Use transform for movement, but make opacity/scale changes smoother */
-            transition: box-shadow 0.2s ease, opacity 0.3s ease, transform 0.01s linear; 
+            transition: box-shadow 0.2s ease, opacity 0.05s linear, transform 0.01s linear; 
         }
 
         /* Hover/Drag state */
@@ -248,23 +224,38 @@
             box-shadow: 0 0 20px rgba(109, 40, 217, 1), 0 0 40px rgba(109, 40, 217, 0.7);
         }
 
-        /* NEW: Pop/Respawn CSS Classes for smooth fade-out and fade-in */
+        /* Pop/Respawn Classes */
+        /* Orb disappears instantly to be replaced by particles */
         .orb-pop {
             opacity: 0 !important;
-            transform: scale(0) !important;
-            transition: opacity 0.3s ease, transform 0.3s ease !important;
+            transform: scale(0) !important; 
+            transition: none !important;
         }
+        
+        /* Particle Styles */
+        .orb-particle {
+            position: fixed;
+            border-radius: 50%;
+            background-color: #4f46e5; 
+            pointer-events: none;
+            opacity: 1;
+            z-index: 51;
+            transition: all 0.01s linear; /* Default fast transition to be overridden */
+        }
+
+        /* Respawn Styles - Smooth fade and gentle scale up */
         .orb-respawn {
             opacity: 0;
-            transform: scale(0.5);
-            transition: opacity 0.5s ease-out 0.1s, transform 0.5s ease-out 0.1s; /* smooth delay on respawn */
+            /* Use current orbX/orbY for starting position via CSS variables */
+            transform: translate(var(--orbX), var(--orbY)) scale(0.1); 
+            transition: opacity 0.5s ease-out 0.1s, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s; 
         }
         .orb-ready {
             opacity: 1;
-            transform: scale(1);
+            /* Use current orbX/orbY for positioning via CSS variables */
+            transform: translate(var(--orbX), var(--orbY)) scale(1);
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
-
 
     </style>
 </head>
@@ -530,16 +521,13 @@
     const preview = document.getElementById('project-preview');
     const previewImage = document.getElementById('preview-image');
     
-    // Select all elements that should trigger a preview, including project links and typography links
     const interactiveElements = document.querySelectorAll('.project-link, .typography-link');
     
-    // Offset for the preview box relative to the cursor (top right)
     const OFFSET_X = 20;
     const OFFSET_Y = -120; 
 
     let isPreviewVisible = false;
 
-    // 2. Attach handlers to all interactive elements
     interactiveElements.forEach(element => {
         element.addEventListener('mouseenter', (e) => {
             const imageUrl = element.getAttribute('data-preview-image');
@@ -564,51 +552,42 @@
     let targetY = 0;
     let currentX = 0;
     let currentY = 0;
-    const easing = 0.15; // Lower value = more lag/smoother movement
+    const easing = 0.15; 
     let lastTrailTime = 0;
-    const trailInterval = 30; // ms between trail bubbles
+    const trailInterval = 30; 
 
-    // Function to create and animate a small trailing bubble
     function createTrailBubble(x, y) {
         const trail = document.createElement('div');
-        const size = Math.random() * 4 + 2; // size 2px to 6px
+        const size = Math.random() * 4 + 2;
         
         trail.className = 'trail-bubble';
         trail.style.width = `${size}px`;
         trail.style.height = `${size}px`;
         
-        // Random offset for bubbly movement
         const randX = Math.random() * 20 - 10;
         const randY = Math.random() * 20 - 10;
         trail.style.setProperty('--rand-x', randX);
         trail.style.setProperty('--rand-y', randY);
 
-        // Position trail element where the main bubble currently is
         trail.style.left = `${x}px`;
         trail.style.top = `${y}px`;
 
         body.appendChild(trail);
 
-        // Remove the trail element after its animation finishes
         setTimeout(() => {
             trail.remove();
         }, 500);
     }
 
-
-    // Global Mouse Move Listener (updates both preview positioning and bubble target)
     document.addEventListener('mousemove', (e) => {
-        // --- Existing Preview Logic ---
         if (isPreviewVisible) {
             let newX = e.clientX + OFFSET_X;
             let newY = e.clientY + OFFSET_Y;
 
-            // Simple viewport boundary check (preventing overflow off the right edge)
             if (newX + preview.offsetWidth > window.innerWidth - 20) {
                 newX = e.clientX - preview.offsetWidth - OFFSET_X; 
             }
 
-            // Simple viewport boundary check (preventing overflow off the top edge)
             if (newY < 20) {
                 newY = e.clientY + 20; 
             }
@@ -617,24 +596,18 @@
             preview.style.top = `${newY}px`;
         }
         
-        // --- Update target position for the lagging bubble ---
         targetX = e.clientX;
         targetY = e.clientY;
         cursorBubble.style.opacity = '1';
     });
 
-    // Animation loop for smooth lag and trail creation
     function animateCursor(timestamp) {
-        // Interpolate current position towards target position
         currentX += (targetX - currentX) * easing;
         currentY += (targetY - currentY) * easing;
 
-        // Apply position (centered on the 16x16 bubble, so offset by 8px)
         cursorBubble.style.transform = `translate3d(${currentX - 8}px, ${currentY - 8}px, 0)`;
 
-        // Create trail bubbles on an interval based on motion speed
         if (timestamp - lastTrailTime > trailInterval) {
-            // Only create a trail if the bubble is moving
             const isMoving = Math.abs(targetX - currentX) > 1 || Math.abs(targetY - currentY) > 1;
 
             if (isMoving) {
@@ -643,35 +616,24 @@
             }
         }
 
-
         requestAnimationFrame(animateCursor);
     }
     
-    // Start the animation loop when the document loads
     requestAnimationFrame(animateCursor);
 
-    // Fade out when mouse leaves the document body
     document.addEventListener('mouseleave', () => {
         cursorBubble.style.opacity = '0';
     });
 
 
-    // --- Intersection Observer for Floating Scroll Animations (Existing Logic) ---
-
+    // --- Intersection Observer (Existing Logic) ---
     document.addEventListener('DOMContentLoaded', () => {
-        
-        // Define the targets to observe (the small trigger sections)
         const br1Trigger = document.getElementById('br1-trigger');
         const br2Trigger = document.getElementById('br2-trigger');
-
-        // Define the elements to animate (the fixed floating divs)
         const br1Float = document.getElementById('br1-float');
         const br2Float = document.getElementById('br2-float');
-        
-        // State variable for the BR2 timeout
         let br2Timeout = null;
 
-        // Observer Callback Function
         const callback = (entries) => {
             entries.forEach(entry => {
                 const targetId = entry.target.id;
@@ -682,7 +644,6 @@
                 } else if (targetId === 'br2-trigger') {
                     floatElement = br2Float;
                 } else if (targetId === 'opportunity-text-wrapper') {
-                    // Handle the initial Hero text pop-up separately
                     if (entry.isIntersecting) {
                         entry.target.classList.add('is-visible');
                     }
@@ -691,30 +652,24 @@
 
                 if (floatElement) {
                     if (targetId === 'br1-trigger') {
-                               // BR1 Logic (Standard Visibility)
                         if (entry.isIntersecting) {
                             floatElement.classList.add('is-visible');
                         } else {
                             floatElement.classList.remove('is-visible');
                         }
                     } else if (targetId === 'br2-trigger') {
-                        // BR2 Logic (2-Second Visibility)
                         if (entry.isIntersecting) {
-                            // Only set the timer if it's not already visible or waiting to hide
                             if (!floatElement.classList.contains('is-visible')) {
                                 floatElement.classList.add('is-visible');
 
-                                // Clear any potential existing timeout
                                 if (br2Timeout) clearTimeout(br2Timeout);
 
-                                // Set a new timeout to hide the element after 2 seconds
                                 br2Timeout = setTimeout(() => {
                                     floatElement.classList.remove('is-visible');
                                     br2Timeout = null;
-                                }, 2000); // 2000 ms = 2 seconds
+                                }, 2000); 
                             }
                         } else {
-                            // If the user scrolls past the trigger, hide immediately and clear timer
                             if (br2Timeout) clearTimeout(br2Timeout);
                             floatElement.classList.remove('is-visible');
                             br2Timeout = null;
@@ -724,16 +679,13 @@
             });
         };
         
-        // Setup Observer: lowered threshold to 0.80 for smoother, earlier appearance.
         const observer = new IntersectionObserver(callback, {
             root: null,
             threshold: 0.80 
         });
         
-        // Observe the Hero opportunity text (uses the old scroll-fade style)
         const opportunityText = document.getElementById('opportunity-text-wrapper');
         if (opportunityText) {
-             // Use a different observer setup for the hero text that fires early
              new IntersectionObserver((entries) => {
                  entries.forEach(entry => {
                      if (entry.isIntersecting) {
@@ -743,22 +695,19 @@
              }, { threshold: 0.05 }).observe(opportunityText);
         }
 
-        // Observe the new trigger sections
         if (br1Trigger) observer.observe(br1Trigger);
         if (br2Trigger) observer.observe(br2Trigger);
     });
 
-    // --- Lucide Icons initialization (Existing Logic) ---
     lucide.createIcons();
 
 
     // ------------------------------------------------------------------
-    // --- DYNAMIC DRAG ORB LOGIC (UPDATED CODE) ------------------------
+    // --- DYNAMIC DRAG ORB LOGIC (FINAL PARTICLE POP IMPLEMENTATION) ---
     // ------------------------------------------------------------------
 
     const orb = document.getElementById('orb-of-wonder');
-    const SCROLL_MAX_SCALE = 9;   // Orb will grow up to 3x its original size
-    const SCROLL_SCALE_FACTOR = 0.005; 
+    const SCROLL_MAX_SCALE = 6;  
     const INITIAL_X = window.innerWidth / 2 - 20; 
     const INITIAL_Y = window.innerHeight / 2 - 20; 
 
@@ -774,35 +723,91 @@
     const ORB_SIZE = 40; 
     const ORB_RADIUS = ORB_SIZE / 2;
     let orbState = 'ready'; // 'ready', 'popping', 'respawning'
+    
+    // --- NEW: Particle Generator Function ---
+    function createParticles(x, y, scale, count = 20) {
+        
+        for (let i = 0; i < count; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'orb-particle';
+            
+            // Random size between 4px and 12px
+            const size = Math.random() * 8 + 4; 
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            // Initial position (center of the large orb)
+            const centerX = x + (ORB_SIZE * scale) / 2;
+            const centerY = y + (ORB_SIZE * scale) / 2;
+            
+            particle.style.left = `${centerX - size / 2}px`;
+            particle.style.top = `${centerY - size / 2}px`;
+            
+            // Random angle and distance for explosion effect
+            const angle = Math.random() * 2 * Math.PI;
+            const distance = Math.random() * 150 + 50; // Explode out 50 to 200px
+            const duration = 0.5 + Math.random() * 0.5; // Duration 0.5s to 1.0s
+            
+            const targetX = centerX + Math.cos(angle) * distance;
+            const targetY = centerY + Math.sin(angle) * distance;
+            
+            // Apply explosion transform and fade
+            // The translate needs to be relative to the particle's starting point (centerX/Y)
+            const translateX = targetX - (centerX - size / 2);
+            const translateY = targetY - (centerY - size / 2);
+
+            // Force the initial transformation properties to be set immediately
+            particle.style.transform = `translate(0px, 0px) scale(1)`;
+            particle.style.opacity = '1';
+            
+            document.body.appendChild(particle);
+
+            // Trigger CSS transition after a small delay
+            // RequestAnimationFrame ensures styles are applied before transition starts
+            requestAnimationFrame(() => {
+                particle.style.transition = `transform ${duration}s cubic-bezier(0, 0, 0.4, 1), opacity ${duration}s ease-out`;
+                particle.style.transform = `translate(${translateX}px, ${translateY}px) scale(0)`;
+                particle.style.opacity = '0';
+            });
+
+            // Clean up the particle element after its animation
+            setTimeout(() => {
+                particle.remove();
+            }, duration * 1000 + 100);
+        }
+    }
+
 
     function resetOrb() {
-        // Reset state
         orbState = 'respawning'; 
         orbX = INITIAL_X;
         orbY = INITIAL_Y;
         orbVelX = 0;
         orbVelY = 0;
 
-        // Apply smooth respawn look
+        // Apply smooth respawn classes
         orb.classList.remove('orb-pop', 'orb-ready');
         orb.classList.add('orb-respawn');
         orb.style.pointerEvents = 'none';
 
-        // Wait a small moment, then fade/scale back to normal
+        // Set the starting position for the CSS transition
+        orb.style.setProperty('--orbX', `${orbX}px`);
+        orb.style.setProperty('--orbY', `${orbY}px`);
+
+        // Wait for the transition to complete, then mark as ready
         setTimeout(() => {
             orb.classList.remove('orb-respawn');
             orb.classList.add('orb-ready');
             orb.style.pointerEvents = 'auto';
             orbState = 'ready';
-        }, 350); // Give time for the transition to finish
+        }, 650); 
     }
 
-    // 1. Drag Start Handlers (Mouse Down / Touch Start)
+    // 1. Drag Start Handlers
     orb.addEventListener('mousedown', startDrag);
     orb.addEventListener('touchstart', (e) => startDrag(e.touches[0]));
 
     function startDrag(e) {
-        // FIX: Prevent browser default drag/selection behavior
         e.preventDefault(); 
         if (e.button === 2 || orbState !== 'ready') return; 
 
@@ -811,23 +816,28 @@
         orbVelX = 0;
         orbVelY = 0;
 
-        // Use the event clientX/Y directly for initial drag calculation
         const clientX = e.clientX || e.touches[0].clientX;
         const clientY = e.clientY || e.touches[0].clientY;
-
+        
+        // Calculate the current scale-adjusted offset for accurate drag
+        const totalScrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollRatio = totalScrollHeight > 0 ? Math.min(window.scrollY / totalScrollHeight, 1) : 0;
+        const currentScale = 1 + (SCROLL_MAX_SCALE - 1) * scrollRatio;
+        
+        // The orb's actual top-left corner is at (orbX, orbY). 
+        // We calculate the drag offset relative to this corner.
         dragStartX = clientX - orbX;
         dragStartY = clientY - orbY;
 
         lastDragTime = performance.now();
         
-        // Attach move and end listeners to the document
         document.addEventListener('mousemove', onDrag);
         document.addEventListener('mouseup', endDrag);
         document.addEventListener('touchmove', (e) => onDrag(e.touches[0]));
         document.addEventListener('touchend', endDrag);
     }
 
-    // 2. Drag Move Handlers (Mouse Move / Touch Move)
+    // 2. Drag Move Handlers
     function onDrag(e) {
         if (!isDragging) return;
 
@@ -841,25 +851,22 @@
         const newX = clientX - dragStartX;
         const newY = clientY - dragStartY;
 
-        // Calculate velocity (for the "throw" effect) - only calculate if time passed
         if (deltaT > 0) {
             orbVelX = (newX - orbX) / deltaT * 10; 
             orbVelY = (newY - orbY) / deltaT * 10;
         }
 
-        // Update orb position
         orbX = newX;
         orbY = newY;
         
         lastDragTime = now;
     }
 
-    // 3. Drag End Handlers (Mouse Up / Touch End)
+    // 3. Drag End Handlers
     function endDrag() {
         isDragging = false;
         orb.classList.remove('is-dragging');
         
-        // Detach document listeners
         document.removeEventListener('mousemove', onDrag);
         document.removeEventListener('mouseup', endDrag);
         document.removeEventListener('touchmove', onDrag);
@@ -869,7 +876,7 @@
     // 4. Game Loop / Physics Engine
     let lastTime = 0;
     function gameLoop(time) {
-        const deltaTime = (time - lastTime) / 1000; // Time in seconds
+        const deltaTime = (time - lastTime) / 1000;
         lastTime = time;
 
         const viewportW = window.innerWidth;
@@ -883,7 +890,7 @@
         const currentScale = 1 + (SCROLL_MAX_SCALE - 1) * scrollRatio;
         const scaleString = `scale(${currentScale})`;
 
-        // 4.2. Apply Physics (Only if not dragging and not popping/respawning)
+        // 4.2. Apply Physics
         if (!isDragging && orbState === 'ready') {
             const friction = 0.98; 
             orbVelX *= friction;
@@ -893,18 +900,17 @@
             orbY += orbVelY * 60 * deltaTime;
 
             // Bouncing 
-            const scaledRadius = ORB_RADIUS * currentScale;
-
-            if (orbX < -scaledRadius || orbX + ORB_SIZE * currentScale > viewportW) {
+            const scaledSize = ORB_SIZE * currentScale;
+            
+            if (orbX < 0 || orbX + scaledSize > viewportW) {
                 orbVelX *= -0.85; 
-                orbX = Math.max(-scaledRadius, Math.min(orbX, viewportW - scaledRadius - ORB_SIZE * (currentScale - 1)));
+                orbX = Math.max(0, Math.min(orbX, viewportW - scaledSize));
             }
-            if (orbY < -scaledRadius || orbY + ORB_SIZE * currentScale > viewportH) {
+            if (orbY < 0 || orbY + scaledSize > viewportH) {
                 orbVelY *= -0.85; 
-                orbY = Math.max(-scaledRadius, Math.min(orbY, viewportH - scaledRadius - ORB_SIZE * (currentScale - 1)));
+                orbY = Math.max(0, Math.min(orbY, viewportH - scaledSize));
             }
 
-            // Stop movement if velocity is very low
             if (Math.abs(orbVelX) < 0.1 && Math.abs(orbVelY) < 0.1) {
                 orbVelX = 0;
                 orbVelY = 0;
@@ -917,23 +923,25 @@
         
         if (scrollRatio >= 0.99 && isAtBottom && orbState === 'ready') {
             // Initiate Pop/Respawn Sequence
-            orb.classList.remove('orb-ready');
-            orb.classList.add('orb-pop');
             orbState = 'popping';
-            orb.style.pointerEvents = 'none'; // Disable interaction during pop
-
-            // The pop animation is a quick scale-out/fade-out in CSS
-            // The resetOrb function handles the subsequent smooth fade-in/scale-up
+            orb.classList.add('orb-pop');
+            
+            // Create particles at the current large scale position
+            createParticles(orbX, orbY, currentScale, 30); // Use 30 particles for maximum pop effect
+            
+            // Wait for a fraction of a second, then trigger the reset (smooth respawn)
             setTimeout(() => {
                 resetOrb();
-            }, 300); // Wait for the pop fade out (0.3s) before respawn starts
+            }, 50); 
         }
 
-        // 4.4. Apply Transformation (only update position if not popping)
+        // 4.4. Apply Transformation
+        // Always set the orbX/orbY CSS variables for positioning
+        orb.style.setProperty('--orbX', `${orbX}px`);
+        orb.style.setProperty('--orbY', `${orbY}px`);
+
         if (orbState === 'ready' || orbState === 'respawning') {
-            // Apply scale, but combine translation and scaling for position
-            const translateX = orbX + ORB_RADIUS * (currentScale - 1);
-            const translateY = orbY + ORB_RADIUS * (currentScale - 1);
+            // Only update the scale in this loop; the rest is handled by CSS classes (orb-ready, orb-respawn)
             orb.style.transform = `translate(${orbX}px, ${orbY}px) ${scaleString}`;
         }
         
