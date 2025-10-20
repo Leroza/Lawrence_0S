@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>leroza.Des - Portfolio</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Google Fonts (Inter for body, Playfair Display for prestige initials) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <!-- Load Lucide Icons (UMD build to expose lucide globally) -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        /* Custom CSS Variables for Light/Dark Mode and transitions */
+        :root {
+            --color-bg: #111111; /* Default background: dark */
+            --color-text: #f8f8f8; /* Default text: light */
+            --color-border-subtle: #333333;
+            --color-accent: #ffffff;
+        }
+        .light { /* Use .light class to switch to light mode */
+            --color-bg: #ffffff;
+            --color-text: #111111;
+            --color-border-subtle: #e0e0e0;
+            --color-accent: #000000;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            transition: background-color 0.5s ease, color 0.5s ease;
+            /* SCROLL SNAP EFFECT */
+            scroll-snap-type: y mandatory;
+            /* Hide the default OS cursor to avoid double cursors */
+            cursor: none; 
+        }
+
+        /* Custom font for prestige initials */
+        .prestige-font {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* Subtle Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--color-border-subtle);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--color-bg);
+        }
+        
+        /* Glitch Pattern Background for Hero Section */
+        .glitch-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='%23222222' fill-opacity='0.4'%3E%3Cpath fill-rule='evenodd' d='M0 0h4v4H0V0zm4 4h4v4H4V4z'/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 8px 8px;
+            transition: background-image 0.5s;
+        }
+        .light .glitch-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='%23dddddd' fill-opacity='0.4'%3E%3Cpath fill-rule='evenodd' d='M0 0h4v4H0V0zm4 4h4v4H4V4z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        /* Styling for the Open to Work bubble */
+        .speech-bubble {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--color-text);
+            border-radius: 4px;
+            position: relative;
+            background-color: var(--color-bg); 
+            transition: background-color 0.5s, border-color 0.5s;
+        }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 8px;
+            border-style: solid;
+            border-color: var(--color-text) transparent transparent transparent; 
+            transition: border-color 0.5s;
+        }
+        .speech-bubble-text {
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-weight: 700;
+        }
+
+        /* --- GLASSMORHISM EFFECT --- */
+        .glass-background {
+            /* Applies to fixed header, preview, and footer tool */
+            background-color: rgba(17, 17, 17, 0.5); /* Darker semi-transparent background */
+            backdrop-filter: blur(10px); /* The frosted glass effect */
+            -webkit-backdrop-filter: blur(10px); /* For Safari compatibility */
+        }
+        .light .glass-background {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* --- FIXED FLOATING INTERSTITIALS (BR1 & BR2 content) --- */
+        .fixed-interstitial {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50; 
+            pointer-events: none; 
+            
+            opacity: 0;
+            filter: blur(8px);
+            /* Added padding and rounded corners for the glass panel look */
+            padding: 2rem 3rem; 
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            
+            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                        filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .fixed-interstitial.is-visible {
+            opacity: 1;
+            filter: blur(0);
+        }
+        /* --- END FIXED FLOATING INTERSTITIALS --- */
+        
+        /* Project Link Hover Enhancement */
+        .project-link {
+            transition: background-color 0.3s ease, padding-left 0.3s ease, border-color 0.3s ease;
+            border-bottom: 1px solid var(--color-border-subtle);
+            cursor: pointer;
+        }
+        .project-link:hover {
+            background-color: rgba(255, 255, 255, 0.05); 
+            padding-left: 1.5rem;
+        }
+        .light .project-link:hover {
+            background-color: rgba(0, 0, 0, 0.03); 
+        }
+
+        /* Typography Link (Interactive Italic) Hover Enhancement */
+        .typography-link {
+            transition: color 0.3s ease;
+            cursor: pointer;
+            padding-bottom: 2px;
+            line-height: 1.5; /* Ensure link spans don't interfere with each other */
+            display: inline-block;
+        }
+        .typography-link:hover {
+             color: rgba(255, 255, 255, 0.7);
+        }
+        .light .typography-link:hover {
+             color: rgba(0, 0, 0, 0.7);
+        }
+        
+        /* SCROLL SNAP ALIGNMENTS */
+        .snap-start { scroll-snap-align: start; }
+        .snap-center { scroll-snap-align: center; }
+        .snap-end { scroll-snap-align: end; }
+
+        /* MIN HEIGHTS FOR SECTIONS TO PUSH TRIGGERS FURTHER APART */
+        #hero, #typography, #projects, #skills {
+            min-height: 100vh; /* Set all main sections to full viewport height */
+        }
+
+        /* --- CUSTOM CURSOR STYLES --- */
+
+        /* Pulsate Animation for Main Bubble */
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.6);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.3;
+            }
+            100% {
+                transform: scale(0.6);
+                opacity: 0.8;
+            }
+        }
+
+        #cursor-bubble {
+            transition: opacity 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #cursor-bubble:before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: var(--color-text);
+            animation: pulse-ring 2s infinite ease-in-out;
+            opacity: 0.6;
+        }
+        
+        /* Trail Bubble Fade Animation */
+        @keyframes trailFadeOut {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(calc(var(--rand-x) * 1px), calc(var(--rand-y) * 1px)) scale(0);
+                opacity: 0;
+            }
+        }
+        /* Class applied to the generated trail elements */
+        .trail-bubble {
+            position: fixed;
+            border-radius: 50%;
+            background-color: var(--color-text);
+            opacity: 0.8;
+            pointer-events: none;
+            animation: trailFadeOut 0.5s ease-out forwards;
+            z-index: 99; /* Below the main bubble */
+        }
+
+    </style>
+</head>
+<body class="antialiased min-h-screen">
+
+    <!-- Fixed Header & Nav Links (Top Corners) -->
+    <header class="fixed top-0 left-0 right-0 z-40 p-6 lg:p-12 text-sm font-light uppercase tracking-wider transition duration-300 glass-background">
+        <div class="flex justify-between items-center w-full">
+            <!-- Left Corner: Logo -->
+            <div class="flex space-x-6 items-center">
+                <span class="text-xl font-bold tracking-widest mr-4">L</span> 
+                <a href="#hero" class="hover:opacity-70 transition duration-300">leroza.Des</a>
+            </div>
+
+            <!-- Right Corner: Socials & Mode Toggle -->
+            <div class="flex space-x-6 items-center">
+                <a href="https://linkedin.com/in/leroza" target="_blank" aria-label="LinkedIn Profile" class="hover:opacity-70 transition-opacity hidden sm:inline">
+                    LINKEDIN/IN/LEROZA
+                </a>
+                
+                <!-- Dark Mode Toggle -->
+                <button id="mode-toggle" aria-label="Toggle Light Mode" class="p-1 hover:opacity-70 transition-opacity">
+                    <i data-lucide="sun" class="w-6 h-6 inline light:hidden"></i>
+                    <i data-lucide="moon" class="w-6 h-6 hidden light:inline"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dynamic Cursor Bubble (Follows cursor with lag, now pulsates) -->
+    <div id="cursor-bubble" class="fixed pointer-events-none rounded-full w-4 h-4 opacity-0 z-[100] bg-[--color-text]"></div>
+
+
+    <!-- Project Preview Pop-up (Hidden by default, follows cursor) -->
+    <div id="project-preview" class="fixed z-50 pointer-events-none transition-opacity duration-300 ease-in-out opacity-0 border border-gray-300 light:border-gray-600 shadow-xl p-1 rounded-lg glass-background" style="width: 280px; height: 180px;">
+        <img id="preview-image" src="" alt="Project Preview" class="w-full h-full object-cover rounded-md border border-gray-800 light:border-gray-200">
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto space-y-0 lg:space-y-0">
+
+        <!-- Section 1: Hero Initials (LLB) - Snap Start -->
+        <section id="hero" class="min-h-screen pt-24 flex flex-col items-center justify-center text-center glitch-pattern snap-start">
+            <h1 class="prestige-font text-[20vw] sm:text-[30vw] lg:text-[40vw] font-bold leading-none tracking-tighter text-[--color-text]">
+                LLB
+            </h1>
+            
+            <!-- "Always Open" text - Scroll-triggered speech bubble -->
+            <div class="mt-8 py-2 px-4 scroll-fade-element" id="opportunity-text-wrapper">
+                <span class="speech-bubble">
+                    <span class="speech-bubble-text text-lg">always open for opportunity</span>
+                </span>
+            </div>
+            
+            <a href="#typography" class="mt-12 text-sm uppercase tracking-widest text-[--color-text] opacity-60 hover:opacity-100 transition duration-300">
+                Typography Study <i data-lucide="arrow-down" class="w-4 h-4 inline-block ml-1"></i>
+            </a>
+            
+            <!-- Bottom Left/Right Metadata (Reference Image Style) -->
+            <!-- Glassmorphism applied here -->
+            <div class="fixed bottom-6 left-6 text-xs uppercase tracking-widest p-2 rounded-lg glass-background border border-gray-700/50">
+                DIGITAL PRODUCT DESIGNER <span class="block">BASED IN CALOOCAN CITY</span>
+            </div>
+            <div class="fixed bottom-6 right-6 text-xs uppercase tracking-widest text-right p-2 rounded-lg glass-background border border-gray-700/50">
+                UX, WEB, INTERACTION <span class="block">MOTION, VISUAL</span>
+            </div>
+        </section>
+
+        <!-- NEW SECTION: Typography Study - Snap Start -->
+        <section id="typography" class="px-6 lg:px-12 py-20 snap-start">
+            <a href="#typography"><h2 class="text-4xl font-light mb-16 tracking-wider border-b border-gray-700 light:border-gray-200 pb-4 transition duration-300 hover:opacity-80">01. Typography Study</h2></a>
+            
+            <!-- New Interactive Quote Structure -->
+            <div class="text-center max-w-4xl mx-auto py-20">
+                <p class="prestige-font text-4xl sm:text-5xl lg:text-7xl font-light leading-snug tracking-tighter">
+                    “I 
+                    <span class="italic typography-link" data-preview-image="https://placehold.co/280x180/777777/000000?text=DESIGN+THOUGHT">
+                        design
+                    </span> 
+                    websites that are 
+                    <span class="italic typography-link" data-preview-image="https://placehold.co/280x180/777777/000000?text=CLEAN+AESTHETIC">
+                        clean
+                    </span>, clever, and caffeinated — 
+                    <span class="italic typography-link" data-preview-image="https://placehold.co/280x180/777777/000000?text=OPTIMIZED+FOR+SPEED">
+                        optimized
+                    </span> 
+                    for both performance and 
+                    <span class="italic typography-link" data-preview-image="https://placehold.co/280x180/777777/000000?text=BRAND+VOICE">
+                        personality
+                    </span>.”
+                </p>
+            </div>
+
+            <!-- Scroll link to Projects -->
+            <div class="text-center mt-20">
+                 <a href="#projects" class="text-sm uppercase tracking-widest text-[--color-text] opacity-60 hover:opacity-100 transition duration-300">
+                    Next: Projects <i data-lucide="arrow-down" class="w-4 h-4 inline-block ml-1"></i>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Section 2: Projects (Landscape Style, Text Links with Hover Preview) - Snap Start -->
+        <section id="projects" class="px-6 lg:px-12 py-20 snap-start">
+            <a href="#projects"><h2 class="text-4xl font-light mb-16 tracking-wider border-b border-gray-700 light:border-gray-200 pb-4 transition duration-300 hover:opacity-80">02. Projects</h2></a>
+            <div class="space-y-0">
+                
+                <!-- Project List Items (Remain unchanged) -->
+                <a href="#" class="project-link block text-4xl sm:text-5xl lg:text-6xl font-extralight tracking-tighter uppercase py-4 lg:py-8 transition duration-300"
+                   data-preview-image="https://placehold.co/280x180/000000/FFFFFF?text=E-Commerce+Mockup">
+                    <span class="hover:underline">Figma E-Commerce Platform</span>
+                    <span class="text-sm font-normal ml-4 opacity-50 hidden sm:inline">[UX/UI Design]</span>
+                </a>
+
+                <a href="#" class="project-link block text-4xl sm:text-5xl lg:text-6xl font-extralight tracking-tighter uppercase py-4 lg:py-8 transition duration-300"
+                   data-preview-image="https://placehold.co/280x180/000000/FFFFFF?text=SaaS+Dashboard">
+                    <span class="hover:underline">SaaS Analytics Dashboard</span>
+                    <span class="text-sm font-normal ml-4 opacity-50 hidden sm:inline">[Data Visualization]</span>
+                </a>
+
+                <a href="#" class="project-link block text-4xl sm:text-5xl lg:text-6xl font-extralight tracking-tighter uppercase py-4 lg:py-8 transition duration-300"
+                   data-preview-image="https://placehold.co/280x180/000000/FFFFFF?text=Mobile+App+Concept">
+                    <span class="hover:underline">Mobile App Concept (iOS)</span>
+                    <span class="text-sm font-normal ml-4 opacity-50 hidden sm:inline">[Interaction Design]</span>
+                </a>
+                
+                <a href="#" class="project-link block text-4xl sm:text-5xl lg:text-6xl font-extralight tracking-tighter uppercase py-4 lg:py-8 transition duration-300"
+                   data-preview-image="https://placehold.co/280x180/000000/FFFFFF?text=Agency+Website">
+                    <span class="hover:underline">Agency Marketing Site (Rebuild)</span>
+                    <span class="text-sm font-normal ml-4 opacity-50 hidden sm:inline">[Web Development]</span>
+                </a>
+
+            </div>
+        </section>
+        
+        <!-- Section BR1: Trigger Zone (Small space between Projects and Skills) -->
+        <section id="br1-trigger" class="py-32 border-y border-gray-700 light:border-gray-200"></section>
+
+        <!-- Section 3: Skills and Experience (BENTO BOX LAYOUT) - Snap Start -->
+        <section id="skills" class="px-6 lg:px-12 py-20 snap-start">
+            <a href="#skills"><h2 class="text-4xl font-light mb-16 tracking-wider border-b border-gray-700 light:border-gray-200 pb-4 transition duration-300 hover:opacity-80">03. Skills & Experience</h2></a>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+                <!-- Box 1: Core Expertise (Spans 2 columns) -->
+                <div class="lg:col-span-2 p-6 border border-gray-700 light:border-gray-300 rounded-xl glass-background hover:shadow-2xl transition duration-500 hover:scale-[1.01] flex flex-col">
+                    <i data-lucide="code-square" class="w-8 h-8 mb-4"></i>
+                    <h3 class="text-2xl font-medium mb-3">Core Expertise</h3>
+                    <ul class="space-y-1 text-lg font-light">
+                        <li>Design Systems (Atomic Design)</li>
+                        <li>Accessibility (WCAG) & Testing</li>
+                        <li>Performance Optimization</li>
+                        <li>User Research & Validation</li>
+                    </ul>
+                </div>
+
+                <!-- Box 2: Prototyping Tools -->
+                <div class="p-6 border border-gray-700 light:border-gray-300 rounded-xl glass-background hover:shadow-2xl transition duration-500 hover:scale-[1.01] flex flex-col">
+                    <i data-lucide="figma" class="w-8 h-8 mb-4"></i>
+                    <h3 class="text-2xl font-medium mb-3">Design Tools</h3>
+                    <p class="text-lg font-light leading-relaxed">Figma, Sketch, Adobe XD, Principle (Motion).</p>
+                </div>
+
+                <!-- Box 3: Dev Skills -->
+                <div class="p-6 border border-gray-700 light:border-gray-300 rounded-xl glass-background hover:shadow-2xl transition duration-500 hover:scale-[1.01] flex flex-col">
+                    <i data-lucide="layout-grid" class="w-8 h-8 mb-4"></i>
+                    <h3 class="text-2xl font-medium mb-3">Development Base</h3>
+                    <p class="text-lg font-light leading-relaxed">HTML5, Tailwind CSS, JavaScript, Vue.js / React.</p>
+                </div>
+
+                <!-- Box 4: Experience Summary (Spans 2 columns on small screens, 1 on large) -->
+                <div class="col-span-2 lg:col-span-1 flex flex-col justify-center items-center p-6 border border-gray-700 light:border-gray-300 rounded-xl glass-background hover:shadow-2xl transition duration-500 hover:scale-[1.01]">
+                    <p class="text-5xl font-bold prestige-font mb-2">5+</p>
+                    <p class="uppercase text-sm tracking-widest opacity-70 text-center">Years in Product Design</p>
+                </div>
+
+                <!-- Box 5: Key Focus / Callout (Spans 2 rows) -->
+                <div class="row-span-2 col-span-2 lg:col-span-1 flex flex-col justify-center items-center p-6 border border-gray-700 light:border-gray-300 rounded-xl glass-background hover:shadow-2xl transition duration-500 hover:scale-[1.01]">
+                    <i data-lucide="sparkles" class="w-12 h-12 mb-4 text-gray-400 light:text-gray-700"></i>
+                    <h3 class="text-2xl font-medium mb-2 text-center">Motion & Interaction</h3>
+                    <p class="text-center text-sm opacity-80">Bringing interfaces to life with subtle, purposeful motion design.</p>
+                </div>
+
+                <!-- Box 6: Standard Experience Text (Spans 2 columns on large screens) -->
+                <div class="lg:col-span-2 p-6 border border-gray-700 light:border-gray-300 rounded-xl glass-background hover:shadow-2xl transition duration-500 hover:scale-[1.01] flex flex-col">
+                    <i data-lucide="briefcase" class="w-8 h-8 mb-4"></i>
+                    <h3 class="text-2xl font-medium mb-4">Latest Roles</h3>
+                    <div class="space-y-4 text-lg font-light">
+                        <div>
+                            <p class="font-normal">Lead Designer @ Innovatech Solutions</p>
+                            <p class="text-sm opacity-70">2020 – Present | Focused on B2B SaaS interfaces.</p>
+                        </div>
+                        <div>
+                            <p class="font-normal">Junior Developer @ Creative Studio X</p>
+                            <p class="text-sm opacity-70">2018 – 2020 | Built custom WordPress themes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section BR2: Trigger Zone (Small space between Skills and Contact) -->
+        <section id="br2-trigger" class="py-32 border-y border-gray-700 light:border-gray-200"></section>
+
+    </main>
+    
+    <!-- Section 4: Footer/Contact - Snap End -->
+    <footer id="contact" class="glitch-pattern px-6 lg:px-12 py-16 snap-end">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center md:items-start space-y-8 md:space-y-0">
+            
+            <!-- Links & Contact (Glass Container) -->
+            <div class="flex flex-col items-center md:items-start space-y-8 p-4 border border-gray-700 light:border-gray-300 rounded-xl shadow-lg glass-background">
+                <div class="flex space-x-6">
+                    <a href="https://github.com/yourprofile" target="_blank" aria-label="GitHub Profile" class="text-[--color-text] hover:opacity-70 transition-opacity">
+                        <i data-lucide="github" class="w-8 h-8"></i>
+                    </a>
+                    <a href="https://dribbble.com/yourprofile" target="_blank" aria-label="Dribbble Profile" class="text-[--color-text] hover:opacity-70 transition-opacity">
+                        <i data-lucide="figma" class="w-8 h-8"></i>
+                    </a>
+                    <a href="mailto:hello@leroza.des" aria-label="Email Address" class="text-[--color-text] hover:opacity-70 transition-opacity">
+                        <i data-lucide="mail" class="w-8 h-8"></i>
+                    </a>
+                </div>
+
+                <!-- Resume Download Button -->
+                <a href="/path/to/your/resume.pdf" download class="group border border-[--color-text] px-8 py-3 rounded-full text-lg font-medium tracking-wide relative overflow-hidden transition-colors duration-300 hover:bg-[--color-text] hover:text-[--color-bg]">
+                    <span class="relative z-10">Download Resume (PDF)</span>
+                </a>
+            </div>
+
+            <!-- New Gemini Feature: Cover Letter Draft (Glass Container) -->
+            <div class="w-full md:w-1/2 lg:w-2/5 p-4 border border-gray-700 light:border-gray-300 rounded-xl shadow-lg space-y-3 glass-background">
+                <h4 class="text-xl font-medium tracking-wide border-b pb-2 mb-2 border-gray-700 light:border-gray-200">
+                    Client Studio ✨
+                </h4>
+                <p class="text-sm opacity-70">Generate a personalized intro snippet for any role/company.</p>
+                <input type="text" id="role-input" placeholder="Role, Team, or Company Name" class="w-full p-2 bg-[--color-bg] border border-gray-600 light:border-gray-400 rounded-md text-sm transition-colors focus:border-[--color-text] outline-none">
+                <button id="generate-intro-btn" class="w-full px-4 py-2 bg-[--color-text] text-[--color-bg] rounded-md font-medium text-sm transition-opacity hover:opacity-80 disabled:opacity-50">
+                    ✨ Draft My Introduction
+                </button>
+                <div id="loading-indicator" class="hidden text-sm text-center opacity-60">Generating...</div>
+                <div id="intro-result" class="text-sm pt-2 text-left whitespace-pre-wrap min-h-[4rem] border-t border-gray-700 light:border-gray-200"></div>
+            </div>
+
+        </div>
+        <p class="text-center text-sm mt-12 opacity-50">leroza.Des Portfolio | Designed with minimalism and precision.</p>
+    </footer>
+
+    <!-- FIXED FLOATING INTERSTITIAL MESSAGES (Glass Containers) -->
+    <div id="br1-float" class="fixed-interstitial text-center glass-background">
+        <h3 class="text-2xl sm:text-4xl font-light uppercase tracking-widest opacity-70">
+            <span>(NOT CONVINCED?)</span>
+        </h3>
+    </div>
+
+    <div id="br2-float" class="fixed-interstitial text-center glass-background">
+        <h3 class="text-2xl sm:text-4xl font-light uppercase tracking-widest opacity-70">
+            <span>(READY TO CONNECT?)</span>
+        </h3>
+    </div>
+
+
+<script>
+    // --- Dark Mode / Light Mode Toggle ---
+    const htmlElement = document.documentElement;
+    const modeToggle = document.getElementById('mode-toggle');
+
+    function initializeDarkMode() {
+        const storedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (storedTheme === 'light' || (!storedTheme && !prefersDark)) {
+            htmlElement.classList.add('light');
+            htmlElement.classList.remove('dark');
+        } else {
+            htmlElement.classList.remove('light');
+            htmlElement.classList.add('dark');
+        }
+    }
+
+    function toggleDarkMode() {
+        const isLight = htmlElement.classList.toggle('light');
+        if (isLight) {
+            htmlElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        } else {
+            htmlElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+
+    modeToggle.addEventListener('click', toggleDarkMode);
+    initializeDarkMode();
+
+    // --- JavaScript for Project Hover Preview Effect ---
+
+    const preview = document.getElementById('project-preview');
+    const previewImage = document.getElementById('preview-image');
+    
+    // Select all elements that should trigger a preview, including project links and typography links
+    const interactiveElements = document.querySelectorAll('.project-link, .typography-link');
+    
+    // Offset for the preview box relative to the cursor (top right)
+    const OFFSET_X = 20;
+    const OFFSET_Y = -120; 
+
+    let isPreviewVisible = false;
+
+    // 2. Attach handlers to all interactive elements
+    interactiveElements.forEach(element => {
+        element.addEventListener('mouseenter', (e) => {
+            const imageUrl = element.getAttribute('data-preview-image');
+            if (imageUrl) {
+                previewImage.src = imageUrl;
+                preview.style.opacity = '1';
+                isPreviewVisible = true;
+            }
+        });
+
+        element.addEventListener('mouseleave', () => {
+            preview.style.opacity = '0';
+            isPreviewVisible = false;
+        });
+    });
+
+
+    // --- Dynamic Cursor Bubble Logic (Pulsing and Trails) ---
+    const cursorBubble = document.getElementById('cursor-bubble');
+    const body = document.body;
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    const easing = 0.15; // Lower value = more lag/smoother movement
+    let lastTrailTime = 0;
+    const trailInterval = 30; // ms between trail bubbles
+
+    // Function to create and animate a small trailing bubble
+    function createTrailBubble(x, y) {
+        const trail = document.createElement('div');
+        const size = Math.random() * 4 + 2; // size 2px to 6px
+        
+        trail.className = 'trail-bubble';
+        trail.style.width = `${size}px`;
+        trail.style.height = `${size}px`;
+        
+        // Random offset for bubbly movement
+        const randX = Math.random() * 20 - 10;
+        const randY = Math.random() * 20 - 10;
+        trail.style.setProperty('--rand-x', randX);
+        trail.style.setProperty('--rand-y', randY);
+
+        // Position trail element where the main bubble currently is
+        trail.style.left = `${x}px`;
+        trail.style.top = `${y}px`;
+
+        body.appendChild(trail);
+
+        // Remove the trail element after its animation finishes
+        setTimeout(() => {
+            trail.remove();
+        }, 500);
+    }
+
+
+    // Global Mouse Move Listener (updates both preview positioning and bubble target)
+    document.addEventListener('mousemove', (e) => {
+        // --- Existing Preview Logic ---
+        if (isPreviewVisible) {
+            let newX = e.clientX + OFFSET_X;
+            let newY = e.clientY + OFFSET_Y;
+
+            // Simple viewport boundary check (preventing overflow off the right edge)
+            if (newX + preview.offsetWidth > window.innerWidth - 20) {
+                newX = e.clientX - preview.offsetWidth - OFFSET_X; 
+            }
+
+            // Simple viewport boundary check (preventing overflow off the top edge)
+            if (newY < 20) {
+                newY = e.clientY + 20; 
+            }
+
+            preview.style.left = `${newX}px`;
+            preview.style.top = `${newY}px`;
+        }
+        
+        // --- Update target position for the lagging bubble ---
+        targetX = e.clientX;
+        targetY = e.clientY;
+        cursorBubble.style.opacity = '1';
+    });
+
+    // Animation loop for smooth lag and trail creation
+    function animateCursor(timestamp) {
+        // Interpolate current position towards target position
+        currentX += (targetX - currentX) * easing;
+        currentY += (targetY - currentY) * easing;
+
+        // Apply position (centered on the 16x16 bubble, so offset by 8px)
+        cursorBubble.style.transform = `translate3d(${currentX - 8}px, ${currentY - 8}px, 0)`;
+
+        // Create trail bubbles on an interval based on motion speed
+        if (timestamp - lastTrailTime > trailInterval) {
+            // Only create a trail if the bubble is moving
+            const isMoving = Math.abs(targetX - currentX) > 1 || Math.abs(targetY - currentY) > 1;
+
+            if (isMoving) {
+                 createTrailBubble(currentX, currentY);
+                 lastTrailTime = timestamp;
+            }
+        }
+
+
+        requestAnimationFrame(animateCursor);
+    }
+    
+    // Start the animation loop when the document loads
+    requestAnimationFrame(animateCursor);
+
+    // Fade out when mouse leaves the document body
+    document.addEventListener('mouseleave', () => {
+        cursorBubble.style.opacity = '0';
+    });
+
+
+    // --- Intersection Observer for Floating Scroll Animations ---
+
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // Define the targets to observe (the small trigger sections)
+        const br1Trigger = document.getElementById('br1-trigger');
+        const br2Trigger = document.getElementById('br2-trigger');
+
+        // Define the elements to animate (the fixed floating divs)
+        const br1Float = document.getElementById('br1-float');
+        const br2Float = document.getElementById('br2-float');
+        
+        // State variable for the BR2 timeout
+        let br2Timeout = null;
+
+        // Observer Callback Function
+        const callback = (entries) => {
+            entries.forEach(entry => {
+                const targetId = entry.target.id;
+                let floatElement;
+
+                if (targetId === 'br1-trigger') {
+                    floatElement = br1Float;
+                } else if (targetId === 'br2-trigger') {
+                    floatElement = br2Float;
+                } else if (targetId === 'opportunity-text-wrapper') {
+                    // Handle the initial Hero text pop-up separately
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                    return;
+                }
+
+                if (floatElement) {
+                    if (targetId === 'br1-trigger') {
+                         // BR1 Logic (Standard Visibility)
+                        if (entry.isIntersecting) {
+                            floatElement.classList.add('is-visible');
+                        } else {
+                            floatElement.classList.remove('is-visible');
+                        }
+                    } else if (targetId === 'br2-trigger') {
+                        // BR2 Logic (2-Second Visibility)
+                        if (entry.isIntersecting) {
+                            // Only set the timer if it's not already visible or waiting to hide
+                            if (!floatElement.classList.contains('is-visible')) {
+                                floatElement.classList.add('is-visible');
+
+                                // Clear any potential existing timeout
+                                if (br2Timeout) clearTimeout(br2Timeout);
+
+                                // Set a new timeout to hide the element after 2 seconds
+                                br2Timeout = setTimeout(() => {
+                                    floatElement.classList.remove('is-visible');
+                                    br2Timeout = null;
+                                }, 2000); // 2000 ms = 2 seconds
+                            }
+                        } else {
+                            // If the user scrolls past the trigger, hide immediately and clear timer
+                            if (br2Timeout) clearTimeout(br2Timeout);
+                            floatElement.classList.remove('is-visible');
+                            br2Timeout = null;
+                        }
+                    }
+                }
+            });
+        };
+        
+        // Setup Observer: lowered threshold to 0.80 for smoother, earlier appearance.
+        const observer = new IntersectionObserver(callback, {
+            root: null,
+            threshold: 0.80 
+        });
+        
+        // Observe the Hero opportunity text (uses the old scroll-fade style)
+        const opportunityText = document.getElementById('opportunity-text-wrapper');
+        if (opportunityText) {
+             // Use a different observer setup for the hero text that fires early
+             new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                })
+             }, { threshold: 0.05 }).observe(opportunityText);
+        }
+
+        // Observe the new trigger sections
+        if (br1Trigger) observer.observe(br1Trigger);
+        if (br2Trigger) observer.observe(br2Trigger);
+    });
+
+    // --- Gemini API Integration for Introduction Drafting ---
+
+    const apiKey = ""; 
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+    const roleInput = document.getElementById('role-input');
+    const generateBtn = document.getElementById('generate-intro-btn');
+    const resultDiv = document.getElementById('intro-result');
+    const loadingDiv = document.getElementById('loading-indicator');
+
+    async function fetchWithRetry(payload, maxRetries = 5) {
+        let delay = 1000;
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status === 429 && i < maxRetries - 1) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                } else {
+                    throw new Error(`API Error: ${response.statusText}`);
+                }
+            } catch (error) {
+                if (i === maxRetries - 1) throw error;
+                await new Promise(resolve => setTimeout(resolve, delay));
+                delay *= 2;
+            }
+        }
+    }
+
+    async function generateIntroduction() {
+        const role = roleInput.value.trim();
+        if (!role) {
+            resultDiv.textContent = 'Please enter a role or company name first.';
+            return;
+        }
+        
+        generateBtn.disabled = true;
+        loadingDiv.classList.remove('hidden');
+        resultDiv.textContent = ''; 
+
+        const systemPrompt = `You are a minimalist web design candidate named LLB. Your portfolio highlights expertise in:
+        - Core Skills: Figma, Sketch, Adobe XD, HTML5, CSS3 (Tailwind, SASS), JavaScript (React, Vue.js), Responsive Design, Prototyping.
+        - Expertise: Design Systems, Accessibility (WCAG), User Research, SEO, Performance Optimization.
+        
+        Draft an extremely concise, professional introductory paragraph (max 3 sentences) for a potential employer. The tone should be precise, modern, and confident. Personalize it using the role/company provided by the user. Do not use any markdown formatting or bullet points.`;
+
+        const userQuery = `Draft an introductory paragraph for the role/company: "${role}".`;
+
+        const payload = {
+            contents: [{ parts: [{ text: userQuery }] }],
+            systemInstruction: {
+                parts: [{ text: systemPrompt }]
+            },
+        };
+
+        try {
+            const result = await fetchWithRetry(payload);
+            const generatedText = result?.candidates?.[0]?.content?.parts?.[0]?.text || 'Could not generate introduction.';
+            
+            resultDiv.textContent = generatedText;
+
+        } catch (error) {
+            console.error('Gemini API failed:', error);
+            resultDiv.textContent = 'Error: Failed to connect to the drafting studio.';
+        } finally {
+            generateBtn.disabled = false;
+            loadingDiv.classList.add('hidden');
+        }
+    }
+
+    generateBtn.addEventListener('click', generateIntroduction);
+
+    // --- Lucide Icons initialization (to render i tags into SVG icons) ---
+    lucide.createIcons();
+
+</script>
+</body>
+</html>
