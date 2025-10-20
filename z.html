@@ -33,6 +33,10 @@
             scroll-snap-type: y mandatory;
             /* Hide the default OS cursor to avoid double cursors */
             cursor: none; 
+            /* FIX: Prevent text selection when dragging (stops the copying issue) */
+            user-select: none; 
+            -webkit-user-select: none; 
+            -moz-user-select: none;
         }
 
         /* Custom font for prestige initials */
@@ -234,7 +238,8 @@
             background: radial-gradient(circle at 30% 30%, #4f46e5, var(--color-text)); /* Blue/Purple gradient */
             box-shadow: 0 0 15px rgba(79, 70, 229, 0.8), 0 0 30px rgba(79, 70, 229, 0.5); /* Outer glow */
             border-radius: 50%;
-            transition: box-shadow 0.2s ease, transform 0.01s linear; /* Keep transform fast, but smooth the glow */
+            /* Use transform for movement, but make opacity/scale changes smoother */
+            transition: box-shadow 0.2s ease, opacity 0.3s ease, transform 0.01s linear; 
         }
 
         /* Hover/Drag state */
@@ -243,15 +248,23 @@
             box-shadow: 0 0 20px rgba(109, 40, 217, 1), 0 0 40px rgba(109, 40, 217, 0.7);
         }
 
-        /* Pop/Respawn Animation */
-        @keyframes orbPop {
-            0% { transform: scale(3); opacity: 1; }
-            50% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        /* NEW: Pop/Respawn CSS Classes for smooth fade-out and fade-in */
         .orb-pop {
-            animation: orbPop 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            opacity: 0 !important;
+            transform: scale(0) !important;
+            transition: opacity 0.3s ease, transform 0.3s ease !important;
         }
+        .orb-respawn {
+            opacity: 0;
+            transform: scale(0.5);
+            transition: opacity 0.5s ease-out 0.1s, transform 0.5s ease-out 0.1s; /* smooth delay on respawn */
+        }
+        .orb-ready {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
 
     </style>
 </head>
@@ -740,14 +753,14 @@
 
 
     // ------------------------------------------------------------------
-    // --- DYNAMIC DRAG ORB LOGIC (NEW CODE) ----------------------------
+    // --- DYNAMIC DRAG ORB LOGIC (UPDATED CODE) ------------------------
     // ------------------------------------------------------------------
 
     const orb = document.getElementById('orb-of-wonder');
     const SCROLL_MAX_SCALE = 3;   // Orb will grow up to 3x its original size
-    const SCROLL_SCALE_FACTOR = 0.005; // How fast the scale increases per pixel scrolled
-    const INITIAL_X = window.innerWidth / 2 - 20; // Start in the middle
-    const INITIAL_Y = window.innerHeight / 2 - 20; // Start in the middle
+    const SCROLL_SCALE_FACTOR = 0.005; 
+    const INITIAL_X = window.innerWidth / 2 - 20; 
+    const INITIAL_Y = window.innerHeight / 2 - 20; 
 
     let orbX = INITIAL_X;
     let orbY = INITIAL_Y;
@@ -758,19 +771,30 @@
     let dragStartY = 0;
     let lastDragTime = 0;
 
-    // Orb dimensions (fixed for collision/center calculation)
     const ORB_SIZE = 40; 
     const ORB_RADIUS = ORB_SIZE / 2;
+    let orbState = 'ready'; // 'ready', 'popping', 'respawning'
 
     function resetOrb() {
+        // Reset state
+        orbState = 'respawning'; 
         orbX = INITIAL_X;
         orbY = INITIAL_Y;
         orbVelX = 0;
         orbVelY = 0;
-        orb.classList.remove('orb-pop');
-        orb.style.opacity = '1';
-        orb.style.pointerEvents = 'auto';
-        orb.style.transform = `translate(${orbX}px, ${orbY}px) scale(1)`;
+
+        // Apply smooth respawn look
+        orb.classList.remove('orb-pop', 'orb-ready');
+        orb.classList.add('orb-respawn');
+        orb.style.pointerEvents = 'none';
+
+        // Wait a small moment, then fade/scale back to normal
+        setTimeout(() => {
+            orb.classList.remove('orb-respawn');
+            orb.classList.add('orb-ready');
+            orb.style.pointerEvents = 'auto';
+            orbState = 'ready';
+        }, 350); // Give time for the transition to finish
     }
 
     // 1. Drag Start Handlers (Mouse Down / Touch Start)
@@ -778,16 +802,21 @@
     orb.addEventListener('touchstart', (e) => startDrag(e.touches[0]));
 
     function startDrag(e) {
-        if (e.button === 2) return; // Prevent right-click drag
+        // FIX: Prevent browser default drag/selection behavior
+        e.preventDefault(); 
+        if (e.button === 2 || orbState !== 'ready') return; 
 
         isDragging = true;
         orb.classList.add('is-dragging');
         orbVelX = 0;
         orbVelY = 0;
 
-        // Record starting positions
-        dragStartX = e.clientX - orbX;
-        dragStartY = e.clientY - orbY;
+        // Use the event clientX/Y directly for initial drag calculation
+        const clientX = e.clientX || e.touches[0].clientX;
+        const clientY = e.clientY || e.touches[0].clientY;
+
+        dragStartX = clientX - orbX;
+        dragStartY = clientY - orbY;
 
         lastDragTime = performance.now();
         
@@ -802,16 +831,21 @@
     function onDrag(e) {
         if (!isDragging) return;
 
+        const clientX = e.clientX || e.touches[0].clientX;
+        const clientY = e.clientY || e.touches[0].clientY;
+        
         const now = performance.now();
         const deltaT = now - lastDragTime;
 
         // Calculate new position
-        const newX = e.clientX - dragStartX;
-        const newY = e.clientY - dragStartY;
+        const newX = clientX - dragStartX;
+        const newY = clientY - dragStartY;
 
-        // Calculate velocity (for the "throw" effect)
-        orbVelX = (newX - orbX) / deltaT * 10; // Scale up velocity for better throw
-        orbVelY = (newY - orbY) / deltaT * 10;
+        // Calculate velocity (for the "throw" effect) - only calculate if time passed
+        if (deltaT > 0) {
+            orbVelX = (newX - orbX) / deltaT * 10; 
+            orbVelY = (newY - orbY) / deltaT * 10;
+        }
 
         // Update orb position
         orbX = newX;
@@ -828,7 +862,7 @@
         // Detach document listeners
         document.removeEventListener('mousemove', onDrag);
         document.removeEventListener('mouseup', endDrag);
-        document.removeEventListener('touchmove', (e) => onDrag(e.touches[0]));
+        document.removeEventListener('touchmove', onDrag);
         document.removeEventListener('touchend', endDrag);
     }
 
@@ -843,35 +877,31 @@
         const currentScrollY = window.scrollY;
 
         // 4.1. Apply Dynamic Scaling on Scroll
-        // Calculate the ratio of scroll distance to total scrollable height
         const totalScrollHeight = document.documentElement.scrollHeight - window.innerHeight;
         const scrollRatio = totalScrollHeight > 0 ? Math.min(currentScrollY / totalScrollHeight, 1) : 0;
         
-        // Scale the orb from 1x to SCROLL_MAX_SCALE
         const currentScale = 1 + (SCROLL_MAX_SCALE - 1) * scrollRatio;
         const scaleString = `scale(${currentScale})`;
 
-        // 4.2. Apply Physics (Only if not dragging)
-        if (!isDragging) {
-            // Deceleration (Friction)
-            const friction = 0.98; // Dampens the velocity
+        // 4.2. Apply Physics (Only if not dragging and not popping/respawning)
+        if (!isDragging && orbState === 'ready') {
+            const friction = 0.98; 
             orbVelX *= friction;
             orbVelY *= friction;
 
-            // Update position based on velocity
             orbX += orbVelX * 60 * deltaTime;
             orbY += orbVelY * 60 * deltaTime;
 
-            // Bouncing (Simple boundary collision detection)
+            // Bouncing 
             const scaledRadius = ORB_RADIUS * currentScale;
 
-            if (orbX < -scaledRadius || orbX + scaledRadius > viewportW) {
-                orbVelX *= -0.85; // Reverse velocity and dampen slightly
-                orbX = Math.max(-scaledRadius, Math.min(orbX, viewportW - scaledRadius)); // Snap back
+            if (orbX < -scaledRadius || orbX + ORB_SIZE * currentScale > viewportW) {
+                orbVelX *= -0.85; 
+                orbX = Math.max(-scaledRadius, Math.min(orbX, viewportW - scaledRadius - ORB_SIZE * (currentScale - 1)));
             }
-            if (orbY < -scaledRadius || orbY + scaledRadius > viewportH) {
-                orbVelY *= -0.85; // Reverse velocity and dampen slightly
-                orbY = Math.max(-scaledRadius, Math.min(orbY, viewportH - scaledRadius)); // Snap back
+            if (orbY < -scaledRadius || orbY + ORB_SIZE * currentScale > viewportH) {
+                orbVelY *= -0.85; 
+                orbY = Math.max(-scaledRadius, Math.min(orbY, viewportH - scaledRadius - ORB_SIZE * (currentScale - 1)));
             }
 
             // Stop movement if velocity is very low
@@ -881,21 +911,29 @@
             }
         }
         
-        // 4.3. Pop/Respawn Check (When scaled to max and scrolled to bottom)
+        // 4.3. Pop/Respawn Check 
         const distanceToBottom = totalScrollHeight - currentScrollY;
         const isAtBottom = distanceToBottom < 100 && totalScrollHeight > 0;
         
-        if (scrollRatio >= 0.99 && isAtBottom && !orb.classList.contains('orb-pop')) {
+        if (scrollRatio >= 0.99 && isAtBottom && orbState === 'ready') {
+            // Initiate Pop/Respawn Sequence
+            orb.classList.remove('orb-ready');
             orb.classList.add('orb-pop');
-            // Make orb temporarily invisible and unclickable while it's popping
-            orb.style.pointerEvents = 'none'; 
+            orbState = 'popping';
+            orb.style.pointerEvents = 'none'; // Disable interaction during pop
+
+            // The pop animation is a quick scale-out/fade-out in CSS
+            // The resetOrb function handles the subsequent smooth fade-in/scale-up
             setTimeout(() => {
                 resetOrb();
-            }, 500); // Reset after the pop animation finishes (0.5s in CSS)
+            }, 300); // Wait for the pop fade out (0.3s) before respawn starts
         }
 
-        // 4.4. Apply Transformation
-        if (!orb.classList.contains('orb-pop')) {
+        // 4.4. Apply Transformation (only update position if not popping)
+        if (orbState === 'ready' || orbState === 'respawning') {
+            // Apply scale, but combine translation and scaling for position
+            const translateX = orbX + ORB_RADIUS * (currentScale - 1);
+            const translateY = orbY + ORB_RADIUS * (currentScale - 1);
             orb.style.transform = `translate(${orbX}px, ${orbY}px) ${scaleString}`;
         }
         
