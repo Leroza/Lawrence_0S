@@ -17,12 +17,14 @@
             --color-text: #f8f8f8; /* Default text: light */
             --color-border-subtle: #333333;
             --color-accent: #ffffff;
+            --color-glass-border: rgba(255, 255, 255, 0.15); /* NEW: Light border for Dark Glass */
         }
         .light { /* Use .light class to switch to light mode */
             --color-bg: #ffffff;
             --color-text: #111111;
             --color-border-subtle: #e0e0e0;
             --color-accent: #000000;
+            --color-glass-border: rgba(0, 0, 0, 0.1); /* NEW: Dark border for Light Glass */
         }
         
         body {
@@ -115,7 +117,8 @@
             /* Added padding and rounded corners for the glass panel look */
             padding: 2rem 3rem; 
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1); 
+            /* UPDATED: Use the adaptive CSS variable for the border */
+            border: 1px solid var(--color-glass-border); 
             
             transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
                         filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -232,14 +235,14 @@
         <div class="flex justify-between items-center w-full">
             <!-- Left Corner: Logo -->
             <div class="flex space-x-6 items-center">
-                <span class="text-xl font-bold tracking-widest mr-4">L</span> 
+                <span class="text-xl font-bold tracking-widest mr-4">LLB</span> 
                 <a href="#hero" class="hover:opacity-70 transition duration-300">leroza.Des</a>
             </div>
 
             <!-- Right Corner: Socials & Mode Toggle -->
             <div class="flex space-x-6 items-center">
                 <a href="https://linkedin.com/in/leroza" target="_blank" aria-label="LinkedIn Profile" class="hover:opacity-70 transition-opacity hidden sm:inline">
-                    LINKEDIN/IN/LEROZA
+                    LINKEDIN/LEROZA
                 </a>
                 
                 <!-- Dark Mode Toggle -->
@@ -261,7 +264,7 @@
     </div>
 
     <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto space-y-0 lg:space-y-0">
+    <main class="space-y-0 lg:space-y-0">
 
         <!-- Section 1: Hero Initials (LLB) - Snap Start -->
         <section id="hero" class="min-h-screen pt-24 flex flex-col items-center justify-center text-center snap-start">
