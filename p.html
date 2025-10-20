@@ -23,8 +23,8 @@
         }
 
         /*
-        * 1. Global Reset & Scroll Snap Setup (Retro Font Applied)
-        */
+         * 1. Global Reset & Scroll Snap Setup (Retro Font Applied)
+         */
         body {
             cursor: none; /* Hide default cursor */
             font-family: 'VT323', monospace;
@@ -46,20 +46,20 @@
             align-items: center;
             justify-content: center;
             scroll-snap-align: start;
-            /* Increased spacing and centered on all devices */
-            padding: 8rem 1rem 6rem 1rem; 
-            text-shadow: 0 0 4px var(--color-khaki), 0 0 8px rgba(195, 176, 145, 0.4); /* Slightly reduced glow */
+            /* Default Adaptive padding */
+            padding: 4rem 1rem; 
+            text-shadow: 0 0 4px var(--color-khaki), 0 0 8px rgba(195, 176, 145, 0.4); 
         }
         
         /* ----------------------------------------------------
-        * CRT OVERLAY & GLITCH EFFECTS (Minimal Custom CSS)
-        * ---------------------------------------------------- */
+         * CRT OVERLAY & GLITCH EFFECTS
+         * ---------------------------------------------------- */
         #crt-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 10000; opacity: 0.85; /* Reduced opacity for less confusion */
+            pointer-events: none; z-index: 10000; opacity: 0.85; 
             box-shadow: inset 0 0 100px rgba(0,0,0,0.7), 0 0 10px rgba(0, 0, 0, 0.8);
-            background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25) 1px, transparent 1px, transparent 2px); /* Lighter scanlines */
-            filter: blur(0.2px) contrast(1.1); /* Reduced blur */
+            background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25) 1px, transparent 1px, transparent 2px); 
+            filter: blur(0.2px) contrast(1.1); 
             transform: perspective(1000px) rotateX(0deg) rotateY(0deg); 
         }
 
@@ -72,55 +72,130 @@
             90%, 100% { text-shadow: 0 0 5px var(--color-maroon), 0 0 10px rgba(80, 0, 0, 0.4); transform: translate(0, 0); }
         }
         .constant-glitch { animation: glitchFlicker 1.2s infinite steps(1); }
-        #glitching-identity { color: var(--color-khaki); z-index: 51; padding: 10px; }
 
-        /*
-        * 2. The Pixel Plane Cursor (Chunky Pixel Art)
-        */
-        #plane-cursor {
-            position: fixed;
-            width: 32px; 
-            height: 32px;
-            pointer-events: none;
-            z-index: 10001;
-            top: 0;
-            left: 0;
-            transform: translate(-50%, -50%);
-            transition: transform 0.05s linear;
+        /* ----------------------------------------------------
+         * TYPOGRAPHY / FULLSCREEN HERO (Matching Inspiration)
+         * ---------------------------------------------------- */
+        
+        /* New specific style for the hero section to minimize padding and stretch content */
+        #intro {
+            padding: 1rem; /* Minimal padding on all sides */
+            align-items: stretch; /* Stretch content vertically to fill the space */
         }
         
-        .plane-body {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 2px; 
-            height: 2px;
-            background-color: var(--color-khaki); 
-            /* Detailed 5x5 pixel plane structure using 4px offsets */
-            box-shadow: 
-                /* Main Body Center Column */
-                0 -8px var(--color-khaki), 0 -4px var(--color-khaki), 
-                0 4px var(--color-khaki), 0 8px var(--color-khaki),
-                
-                /* Main Body Left/Right (1 pixel wide) */
-                -4px 0 var(--color-khaki), 4px 0 var(--color-khaki),
-                -8px 0 var(--color-khaki), 8px 0 var(--color-khaki),
-                
-                /* Wings (Top spread, 7 wide) */
-                -12px 4px var(--color-khaki), 12px 4px var(--color-khaki),
-                -8px 4px var(--color-khaki), 8px 4px var(--color-khaki),
-                -4px 4px var(--color-khaki), 4px 4px var(--color-khaki),
-                
-                /* Firing Tip (2 pixels higher than center) */
-                0 -12px var(--color-khaki),
-                /* Firing Port Indicator (3 pixels higher) - Brighter for bullet origin */
-                0 -16px var(--color-orange); 
-            transform: translate(-50%, -50%);
+        .split-hero-container {
+            display: flex;
+            flex-direction: column; /* Stacked on mobile */
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+            height: 100%;
+        }
+        @media (min-width: 1024px) {
+            .split-hero-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Two columns on large screens */
+                grid-template-rows: auto 1fr auto;
+                gap: 0;
+            }
+        }
+        .hero-massive-text {
+            /* Pushed to 25vw for max mobile impact */
+            font-size: 25vw; 
+            line-height: 0.8; 
+            word-break: break-word; 
+            max-width: 100%; /* Ensure it can fill the container */
+        }
+        @media (min-width: 768px) {
+            .hero-massive-text { 
+                /* Pushed to 18vw for maximum desktop impact */
+                font-size: 18vw; 
+            }
+        }
+        
+        /* General H2 Title for other sections */
+        .max-type-title {
+            font-size: 10vw; line-height: 0.9; margin-bottom: 2rem;
+        }
+        @media (min-width: 768px) {
+            .max-type-title { font-size: 6rem; }
+        }
+        /* General Subtitle for other sections */
+        .max-type-subtitle {
+            font-size: 3rem; line-height: 1.1; margin-top: 3rem; 
+        }
+        @media (min-width: 768px) {
+             .max-type-subtitle { font-size: 4rem; }
+        }
+        .max-type-skill-label {
+            font-size: 1.5rem; 
+        }
+        @media (min-width: 768px) {
+            .max-type-skill-label { font-size: 2.5rem; }
         }
 
         /* ----------------------------------------------------
-        * DYNAMIC ELEMENTS
-        * ---------------------------------------------------- */
+         * UPDATED HUD STYLING (Glass Morphism)
+         * ---------------------------------------------------- */
+        .hud-bar {
+            /* Glass Morphism Effect */
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            backdrop-filter: blur(8px); /* The main blur effect */
+            -webkit-backdrop-filter: blur(8px);
+            
+            /* Reduced/Softened Borders */
+            border-top: 1px solid rgba(195, 176, 145, 0.3); 
+            border-bottom: 1px solid rgba(195, 176, 145, 0.3);
+            color: var(--color-khaki); 
+        }
+
+        /*
+         * 2. The Pixel Plane Cursor & Project Log Smoothness
+         */
+        #plane-cursor {
+            position: fixed;
+            width: 32px; height: 32px; pointer-events: none; z-index: 10001;
+            top: 0; left: 0; transform: translate(-50%, -50%);
+            transition: transform 0.05s linear;
+        }
+        .plane-body {
+            position: absolute; top: 50%; left: 50%; width: 2px; height: 2px;
+            background-color: var(--color-khaki); transform: translate(-50%, -50%);
+            box-shadow: /* Pixel art structure for the plane */
+                0 -8px var(--color-khaki), 0 -4px var(--color-khaki), 0 4px var(--color-khaki), 0 8px var(--color-khaki),
+                -4px 0 var(--color-khaki), 4px 0 var(--color-khaki), -8px 0 var(--color-khaki), 8px 0 var(--color-khaki),
+                -12px 4px var(--color-khaki), 12px 4px var(--color-khaki), -8px 4px var(--color-khaki), 8px 4px var(--color-khaki), -4px 4px var(--color-khaki), 4px 4px var(--color-khaki),
+                0 -12px var(--color-khaki), 0 -16px var(--color-orange); 
+        }
+
+        /* Project item hover styling adjustments for full width & smoothness */
+        .folder-item {
+            padding: 1rem 2rem; 
+            /* Enhanced transition for smoothness across properties */
+            transition: background-color 0.15s ease-out, color 0.15s ease-out, text-shadow 0.15s ease-out;
+        }
+
+        .folder-item:hover {
+            background-color: rgba(80, 0, 0, 0.6); 
+            color: var(--color-white); 
+            text-shadow: 0 0 5px var(--color-white);
+        }
+
+        /* HUD / Taskbar Responsiveness */
+        #hud-bar nav {
+            /* Ensures proper centering on mobile */
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        @media (min-width: 768px) {
+            #hud-bar nav {
+                flex-direction: row;
+                gap: 0;
+            }
+        }
+
+        /* Dynamic Elements */
         .bullet {
             position: fixed; width: 8px; height: 8px;
             background-color: var(--color-orange); 
@@ -128,93 +203,20 @@
             box-shadow: 0 0 10px var(--color-orange), 0 0 30px var(--color-orange); 
             pointer-events: none;
         }
-        
-        /* Only apply destruction styles to targets */
         .destroyed {
             opacity: 0 !important;
             transform: scale(0.5) translateY(-20px);
             transition: opacity 0.3s, transform 0.3s;
         }
-        
-        /* Typography Overrides (Maximized Spacing) */
-        .max-type-title {
-            font-size: 8rem; line-height: 0.9; margin-bottom: 2rem;
-        }
-        @media (min-width: 768px) {
-            .max-type-title { font-size: 14rem; }
-        }
-
-        .max-type-subtitle {
-            font-size: 3rem; line-height: 1.1; margin-top: 3rem; 
-        }
-        @media (min-width: 768px) {
-             .max-type-subtitle { font-size: 5rem; }
-        }
-        
-        .max-type-skill-label {
-            font-size: 2.5rem; line-height: 1.1;
-        }
-        
-        /* Project item hover styling adjustments for full width */
-        .folder-item {
-            padding: 1rem 2rem; /* Consistent padding for full-width items */
-            transition: background-color 0.1s, color 0.1s, text-shadow 0.1s;
-        }
-
-        .folder-item:hover {
-            background-color: rgba(80, 0, 0, 0.6); /* Maroon background highlight */
-            color: var(--color-white); /* Highlight text on hover */
-            text-shadow: 0 0 5px var(--color-white);
-        }
-
-        /* Social Icon Styling */
-        .social-icon {
-            font-size: 2.5rem; /* Large and bold icons */
+        .small-social-icon {
+            font-size: 1.5rem; /* Smaller icons for this specific area */
             color: var(--color-khaki);
-            transition: color 0.2s, text-shadow 0.2s, transform 0.2s;
+            transition: color 0.2s, text-shadow 0.2s;
         }
-        .social-icon:hover {
+        .small-social-icon:hover {
             color: var(--color-orange);
-            text-shadow: 0 0 10px var(--color-orange);
-            transform: scale(1.05);
+            text-shadow: 0 0 8px var(--color-orange);
         }
-
-        /* HUD Styling for buttons/frames */
-        .hud-bar {
-            border-top: 6px solid var(--color-maroon);
-            border-bottom: 6px solid var(--color-maroon);
-            background-color: var(--color-khaki); 
-            box-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
-        }
-        .health-bar-frame {
-            border: 3px solid var(--color-maroon); 
-            background-color: var(--color-black); 
-            height: 18px;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8);
-        }
-        .health-bar-fill {
-            background: linear-gradient(to right, var(--color-danger) 0%, #ffff00 50%, var(--color-safe) 100%);
-            transition: width 0.5s;
-            transform-origin: left;
-        }
-        .skill-button {
-            border: 3px solid var(--color-maroon); 
-            background-color: var(--color-khaki);
-            color: var(--color-maroon);
-            box-shadow: 2px 2px 0 var(--color-black), -2px -2px 0 var(--color-maroon);
-            transition: box-shadow 0.1s ease-in-out, background-color 0.1s;
-        }
-        .skill-button:active, .skill-button.pressed {
-            background-color: var(--color-orange); 
-            color: var(--color-white);
-            box-shadow: inset 2px 2px 0 var(--color-black), inset -2px -2px 0 var(--color-white);
-        }
-        .skill-button.on {
-            background-color: var(--color-white);
-            color: var(--color-maroon);
-            box-shadow: 0 0 8px var(--color-orange); 
-        }
-
     </style>
 </head>
 <body>
@@ -229,7 +231,6 @@
 
     <!-- Bullet Container & Effects -->
     <div id="bullet-container"></div>
-    <div id="confetti-container"></div>
     <div id="explosion-flash"></div>
     <div id="victory-glitch"></div>
     <div id="project-preview" class="fixed top-0 left-0 hidden z-20 pointer-events-none opacity-0">
@@ -239,25 +240,15 @@
         </div>
     </div>
 
-    <!-- Top-Left Glitching Identity (OS Title) -->
-    <div id="glitching-identity" class="fixed top-0 left-0 text-xl md:text-3xl font-extrabold tracking-widest hidden sm:block constant-glitch">
-        LEROZA.<span id="glitch-title" class="text-[var(--color-orange)]">DEV</span>
-    </div>
-
     <!-- HUD / TASKBAR (Fixed to the BOTTOM) -->
     <header id="hud-bar" class="fixed bottom-0 left-0 right-0 z-50 p-3 hud-bar">
+        <!-- Flex direction is column on mobile, row on desktop -->
         <nav class="flex justify-between items-center max-w-7xl mx-auto w-full text-lg">
             
-            <!-- Group 1 (Left: HP & Targets) -->
-            <div class="flex items-center space-x-4 md:space-x-6 mx-auto md:mx-0">
+            <!-- Group 1 (Left: Skills/Toggles HUD) -->
+            <div class="flex items-center space-x-4 md:space-x-6 mx-auto md:mx-0 order-2 md:order-1">
                 
-                <!-- Health Bar Visual -->
-                <div class="flex items-center space-x-2">
-                    <span class="text-xl text-[var(--color-maroon)]">TARGETS:</span>
-                    <div class="health-bar-frame w-20 md:w-28">
-                        <div id="health-fill" class="health-bar-fill" style="width: 100%;"></div>
-                    </div>
-                </div>
+                <!-- Targets/HP removed -->
 
                 <!-- Skills/Toggles HUD -->
                 <div id="skills-hud" class="hidden sm:flex space-x-2 text-sm font-bold">
@@ -267,29 +258,67 @@
                 </div>
             </div>
 
-            <!-- Group 2 (Right: Navigation Links) -->
-            <div class="flex space-x-4 md:space-x-6 text-base font-bold">
-                <a href="#intro" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ HOME ]</a>
-                <a href="#about" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ ABOUT ]</a>
-                <a href="#skills" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ SKILLS ]</a>
-                <a href="#projects" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ PROJECTS ]</a>
-                <a href="#contact" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ CONNECT ]</a>
+            <!-- Group 2 (Right: Navigation Links) - Text color updated to khaki for visibility -->
+            <div class="flex space-x-4 md:space-x-6 text-base font-bold overflow-x-auto p-1 order-1 md:order-2">
+                <a href="#intro" class="text-[var(--color-khaki)] hover:text-[var(--color-orange)] transition duration-200 whitespace-nowrap">[ HOME ]</a>
+                <a href="#about" class="text-[var(--color-khaki)] hover:text-[var(--color-orange)] transition duration-200 whitespace-nowrap">[ ABOUT ]</a>
+                <a href="#skills" class="text-[var(--color-khaki)] hover:text-[var(--color-orange)] transition duration-200 whitespace-nowrap">[ SKILLS ]</a>
+                <a href="#projects" class="text-[var(--color-khaki)] hover:text-[var(--color-orange)] transition duration-200 whitespace-nowrap">[ PROJECTS ]</a>
+                <a href="#contact" class="text-[var(--color-khaki)] hover:text-[var(--color-orange)] transition duration-200 whitespace-nowrap">[ CONNECT ]</a>
             </div>
         </nav>
     </header>
 
-    <!-- SECTION 1: HOME (Maroon Background) -->
-    <section id="intro" class="bg-[var(--color-maroon)]">
-        <div class="text-center max-w-7xl px-4">
+    <!-- SECTION 1: HOME (Maroon Background) - FULLSCREEN TYPOGRAPHY (Inspired by Design) -->
+    <section id="intro" class="bg-[var(--color-maroon)] items-start">
+        <!-- New layout uses a grid/flex structure to replicate the massive split text -->
+        <div class="split-hero-container w-full h-full max-w-full lg:max-w-7xl mx-auto px-4 sm:px-8">
             
-            <h2 class="max-type-title font-extrabold text-[var(--color-khaki)] destructible-text" data-section="intro">
-                OS // LEROZA.DEV 
-            </h2>
-            <p class="max-type-subtitle font-light text-[var(--color-white)]" data-section="intro">
-                SYSTEM INITIATED. TARGETS ONLINE.
-            </p>
-            <p class="max-type-subtitle font-light text-[var(--color-white)] mt-8 text-2xl md:text-4xl" data-section="intro">
-                DESTROY ALL TARGETS FOR OPTIONAL BONUS.
+            <!-- Left/Top Block: LEROZA.DEV -->
+            <div class="flex flex-col mb-8 lg:mb-0 lg:order-1 lg:col-span-1">
+                <!-- Social Links and Speciality Text -->
+                <div class="flex items-center space-x-4 mb-4">
+                    <p class="text-base md:text-xl text-[var(--color-khaki)] font-light">// FRONT-END // SPECIALIST</p>
+                    
+                    <!-- LinkedIn Link -->
+                    <a href="https://linkedin.com/in/leroza" target="_blank" aria-label="LinkedIn" class="small-social-icon">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    
+                    <!-- Facebook Link -->
+                    <a href="https://facebook.com/leroza" target="_blank" aria-label="Facebook" class="small-social-icon">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                </div>
+                
+                <!-- Main Name Block (LEROZA) -->
+                <h2 class="hero-massive-text font-extrabold text-[var(--color-khaki)] destructible-text text-left" data-section="intro">
+                    LEROZA.<span class="text-[var(--color-orange)]">DES</span>
+                </h2>
+                
+                <div class="mt-4 lg:mt-8">
+                    <span class="text-base md:text-xl text-[var(--color-khaki)] border border-[var(--color-khaki)] p-1 inline-block">2024 - PRESENT</span>
+                </div>
+            </div>
+            
+            <!-- Right/Bottom Block: INTO OPPORTUNITY. (STATIC) -->
+            <!-- On mobile, this stacks below LEROZA.DEV. On desktop, it moves right and bottom. -->
+            <div class="flex flex-col items-start lg:items-end lg:order-2 lg:col-span-1 lg:row-span-2 justify-self-end self-end">
+                
+                <!-- The static "INTO" part -->
+                <h2 class="hero-massive-text font-extrabold text-[var(--color-khaki)] text-left lg:text-right" data-section="intro">
+                    MAKE
+                </h2>
+                
+                <!-- The now static "OPPORTUNITY." part -->
+                <h2 class="hero-massive-text text-[var(--color-orange)] constant-glitch font-extrabold text-left lg:text-right" 
+                    data-section="intro" style="transition: none;">
+                    CREATE
+                </h2>
+            </div>
+            
+            <!-- Game prompt placed at the bottom, full width -->
+            <p class="text-base md:text-xl font-light text-[var(--color-white)] mt-12 w-full lg:order-3 lg:col-span-2 lg:mt-0">
             </p>
         </div>
     </section>
@@ -300,18 +329,18 @@
              <h2 class="max-type-title font-extrabold destructible-text mb-12" data-section="about">
                 USER_FILE
             </h2>
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-center gap-12">
+            <div class="flex flex-col md:flex-row items-center md:items-start justify-center gap-12">
                 
                 <!-- Avatar/Image Placeholder -->
                 <div class="w-full md:w-1/3 flex justify-center mb-8 md:mb-0">
                      <img src="https://placehold.co/250x250/500000/C3B091?text=AVATAR" 
                           alt="Leroza Avatar" 
-                          class="border-8 border-[var(--color-maroon)] shadow-2xl rounded-none" 
+                          class="border-8 border-[var(--color-maroon)] shadow-2xl rounded-none w-48 h-48 md:w-64 md:h-64 object-cover" 
                           style="box-shadow: 0 0 30px rgba(80, 0, 0, 0.8);">
                 </div>
 
-                <!-- Text Content (Now static and easy to read) -->
-                <div class="w-full md:w-2/3 text-left space-y-8 text-2xl md:text-4xl">
+                <!-- Text Content (Now responsive text) -->
+                <div class="w-full md:w-2/3 text-left space-y-8 text-xl md:text-3xl">
                     <p data-section="about">
                         // REPORT\_001: Leroza is a Frontend Combat Specialist dedicated to creating **elegant, high-performance web experiences**. Expertise: translating complex designs into robust, pixel-perfect UIs.
                     </p>
@@ -333,17 +362,18 @@
                 SKILL_MATRIX
             </h2>
             
-            <div class="skill-matrix-section text-left w-full md:w-[900px] p-8 md:p-12 relative mx-auto">
+            <div class="skill-matrix-section text-left w-full md:w-[900px] p-4 md:p-12 relative mx-auto">
                 
-                <h3 class="max-type-subtitle font-extrabold text-[var(--color-khaki)] mb-8 border-b-4 border-b-[var(--color-khaki)] pb-2 text-[var(--color-khaki)]">
+                <h3 class="max-type-subtitle font-extrabold text-[var(--color-khaki)] mb-8 border-b-4 border-b-[var(--color-khaki)] pb-2">
                     PROGRAMMING // CAPACITIES
                 </h3>
                 
-                <div id="skill-list" class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10"> 
+                <!-- Responsive Grid: 1 column on mobile, 2 columns on desktop -->
+                <div id="skill-list" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"> 
                     <!-- Skills populated by JS - These remain targets -->
                 </div>
 
-                <p class="max-type-subtitle font-extralight text-[var(--color-khaki)] mt-12 text-[var(--color-khaki)]">
+                <p class="max-type-subtitle font-extralight text-[var(--color-khaki)] mt-12 text-lg md:text-2xl">
                     // PERCENTAGES ARE TARGETS. DESTROY ALL TO PROVE MASTERY.
                 </p>
             </div>
@@ -356,28 +386,28 @@
             <h2 class="max-type-title font-extrabold mb-12 destructible-text" data-section="projects">
                 PROJECT_LOG
             </h2>
-            <!-- New Folder List Structure - Stretched across the viewport -->
-            <div id="project-folder-list" class="mt-16 text-left w-full mx-auto space-y-4">
+            <!-- Folder List Structure - Stretched across the viewport -->
+            <div id="project-folder-list" class="mt-16 text-left w-full max-w-4xl mx-auto space-y-4">
                 
-                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="projects" 
+                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)] cursor-pointer" data-section="projects" 
                     onmouseover="showPreview(event, 'https://placehold.co/400x250/500000/C3B091?text=REAL-TIME\_MMO\_COMBAT\_UI')"
                     onmouseout="hidePreview()">
                     > [DIR] REAL-TIME\_MMO\_COMBAT\_UI\_SYSTEM (2024)
                 </div>
                 
-                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="projects" 
+                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)] cursor-pointer" data-section="projects" 
                     onmouseover="showPreview(event, 'https://placehold.co/400x250/C3B091/500000?text=FULL\_STACK\_ANALYTICS\_DASHBOARD')"
                     onmouseout="hidePreview()">
                     > [DIR] FULL\_STACK\_ANALYTICS\_DASHBOARD\_PLATFORM (2023)
                 </div>
                 
-                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="projects" 
+                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)] cursor-pointer" data-section="projects" 
                     onmouseover="showPreview(event, 'https://placehold.co/400x250/ff8c00/FFFFFF?text=WEBSOCKETS\_AND\_THREEJS\_3D')"
                     onmouseout="hidePreview()">
                     > [DIR] WEBSOCKETS\_AND\_THREEJS\_3D\_ENVIRONMENT (2022)
                 </div>
                 
-                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="projects" 
+                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)] cursor-pointer" data-section="projects" 
                     onmouseover="showPreview(event, 'https://placehold.co/400x250/00ff00/500000?text=GENERATIVE\_AI\_NATURAL\_LANGUAGE')"
                     onmouseout="hidePreview()">
                     > [FILE] GENERATIVE\_AI\_NATURAL\_LANGUAGE\_ENGINE\_V1.EXE
@@ -393,12 +423,12 @@
             <h2 class="max-type-title font-extrabold mb-12 destructible-text" data-section="contact">
                 SYSTEM_SHUTDOWN
             </h2>
-            <p class="max-type-subtitle font-light text-[var(--color-white)] mt-8" data-section="contact">
+            <p class="max-type-subtitle font-light text-[var(--color-white)] mt-8 text-xl md:text-3xl" data-section="contact">
                 LEROZA@DEV.IO // TERMINATION POINT
             </p>
 
             <!-- Social Icons -->
-            <div class="flex justify-center space-x-12 mt-12 mb-16">
+            <div class="flex justify-center space-x-8 md:space-x-12 mt-12 mb-16">
                 <a href="https://github.com/leroza" target="_blank" aria-label="GitHub" class="social-icon">
                     <i class="fab fa-github"></i>
                 </a>
@@ -414,8 +444,8 @@
             </div>
 
             <div class="mt-16">
-                <!-- Contact Button: Hard lines, orange hover, inverse colors -->
-                <a href="mailto:leroza@dev.io" class="inline-block px-10 py-6 text-3xl font-bold bg-[var(--color-khaki)] text-[var(--color-maroon)] rounded-none shadow-2xl border-4 border-white hover:bg-[var(--color-orange)] hover:text-white transition duration-300 transform hover:scale-105">
+                <!-- Contact Button -->
+                <a href="mailto:leroza@dev.io" class="inline-block px-8 py-4 text-xl md:text-3xl font-bold bg-[var(--color-khaki)] text-[var(--color-maroon)] rounded-none shadow-2xl border-4 border-white hover:bg-[var(--color-orange)] hover:text-white transition duration-300 transform hover:scale-105">
                     INITIATE_CONTACT
                 </a>
             </div>
@@ -426,11 +456,8 @@
         // --- Game Setup and Constants ---
         const planeCursor = document.getElementById('plane-cursor');
         const bulletContainer = document.getElementById('bullet-container');
-        const healthFillElement = document.getElementById('health-fill');
-        const confettiContainer = document.getElementById('confetti-container');
-        const skillListElement = document.getElementById('skill-list');
         const explosionFlash = document.getElementById('explosion-flash');
-        const glitchTitleEl = document.getElementById('glitch-title');
+        const skillListElement = document.getElementById('skill-list'); 
         
         // Preview elements
         const projectPreview = document.getElementById('project-preview');
@@ -442,7 +469,7 @@
         const FIRE_RATE = 100; 
         const REPAIR_AMOUNT = 5; 
 
-        // Consolidated Skill Data (Updated list for richer content)
+        // Consolidated Skill Data
         const SKILL_DATA = [
             { name: "HTML/CSS/TAILWIND", percent: 95, color: '#ff8c00' }, 
             { name: "JAVASCRIPT (ES6+)", percent: 95, color: '#00ff00' },
@@ -462,7 +489,7 @@
         let targets = []; 
         let totalTargets = 0;
         let destroyedTargets = 0;
-        let gameOver = false; // Only tracks if *all* targets were destroyed
+        let gameOver = false; 
         let hideTimeout;
         let spreadShotActive = false;
         let isFiring = true; 
@@ -477,8 +504,8 @@
 
             SKILL_DATA.forEach(skill => {
                 const skillLine = document.createElement('div');
-                // Removed 'chaotic-skill' class for stability and clarity, but kept destructible-text
-                skillLine.className = `max-type-skill-label destructible-text font-light flex flex-col md:flex-row items-start md:items-center justify-between space-y-2 md:space-y-0`;
+                // IMPORTANT: Removed 'destructible-text' from here to prevent double processing in initializeTargets()
+                skillLine.className = `max-type-skill-label font-light flex flex-col md:flex-row items-start md:items-center justify-between space-y-2 md:space-y-0`;
                 skillLine.style.animationDelay = `-${Math.random()}s`;
 
                 // Name (Static White text for high contrast inside the maroon skill box)
@@ -501,7 +528,7 @@
                     percentContainer.appendChild(span);
                     
                     if (char !== ' ') {
-                        targets.push(span); // Add new targets
+                        targets.push(span); // Add new targets for the game
                     }
                 });
 
@@ -552,19 +579,10 @@
         }
 
         /**
-         * 3. Health Bar and Game State Management
-         * No longer enforces navigation, only tracks the optional goal.
+         * 3. Health Bar and Game State Management (Now only checks for optional victory)
          */
         function updateHealthBar() {
             if (totalTargets === 0) return;
-
-            const remainingPercentage = 100 - ((destroyedTargets / totalTargets) * 100);
-            const clampedPercentage = Math.max(0, remainingPercentage);
-            
-            healthFillElement.style.width = `${clampedPercentage}%`; 
-            
-            // Simplified color control
-            healthFillElement.style.background = 'linear-gradient(to right, var(--color-danger) 0%, #ffff00 50%, var(--color-safe) 100%)';
 
             // Check for optional "Game Over" (All targets destroyed)
             if (destroyedTargets >= totalTargets && !gameOver) {
@@ -612,10 +630,15 @@
         function toggleSkillButtonVisual(skillId, isActive) {
             const skillEl = document.getElementById(skillId);
             if (!skillEl) return;
+            // Handle skill button styling
             if (isActive) {
                 skillEl.classList.add('on');
+                skillEl.classList.remove('text-[var(--color-maroon)]');
+                skillEl.classList.add('text-[var(--color-white)]');
             } else {
                 skillEl.classList.remove('on');
+                skillEl.classList.add('text-[var(--color-maroon)]');
+                skillEl.classList.remove('text-[var(--color-white)]');
             }
         }
 
@@ -658,27 +681,8 @@
         }
 
         /**
-         * 4. Shatter Effect & Victory Glitch
+         * 4. Victory Glitch
          */
-        function triggerShatter(x, y) {
-            const pieceCount = 8;
-            for (let i = 0; i < pieceCount; i++) {
-                const piece = document.createElement('div');
-                piece.className = 'shatter-piece';
-                piece.style.left = `${x}px`;
-                piece.style.top = `${y}px`;
-                const angle = Math.random() * 2 * Math.PI;
-                const distance = Math.random() * 30 + 10;
-                
-                setTimeout(() => {
-                    piece.style.opacity = '0';
-                    piece.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) rotate(${Math.random() * 360}deg)`;
-                }, 10);
-                confettiContainer.appendChild(piece); 
-                setTimeout(() => piece.remove(), 550);
-            }
-        }
-        
         function triggerGlitchEffect() {
             const glitchEl = document.getElementById('victory-glitch');
             if (!glitchEl) return;
@@ -706,6 +710,15 @@
             }
         });
         
+        // Add touch event support for basic cursor tracking on mobile
+        document.addEventListener('touchmove', (e) => {
+             e.preventDefault(); // Prevent scrolling while touching the cursor area
+             const touch = e.touches[0];
+             mouseX = touch.clientX;
+             mouseY = touch.clientY;
+             planeCursor.style.transform = `translate(${mouseX}px, ${touch.clientY}px)`;
+        });
+
         document.getElementById('skill-1').addEventListener('click', toggleSpreadShot);
         document.getElementById('skill-2').addEventListener('click', repairTargets);
         document.getElementById('skill-3').addEventListener('click', toggleGunActive);
@@ -778,10 +791,8 @@
                         targetSpan.classList.add('destroyed');
                         targetSpan.dataset.destroyed = 'true';
                         
-                        const centerX = rect.left + rect.width / 2;
-                        const centerY = rect.top + rect.height / 2;
-                        triggerShatter(centerX, centerY);
-
+                        // Shatter effect code removed
+                        
                         destroyedTargets++;
                         updateHealthBar();
                         
@@ -796,18 +807,10 @@
         }
 
         window.onload = () => {
-             // Glitching text content toggle
-            let isDev = true;
-            if (glitchTitleEl) {
-                setInterval(() => {
-                    isDev = !isDev;
-                    glitchTitleEl.textContent = isDev ? 'DEV' : 'DESIGNER';
-                }, 1200); 
-            }
-
             setupSkillsMatrixSection(); 
-            initializeTargets(); 
+            initializeTargets(); // Now runs AFTER skills are added
             
+            // Ensure visual state is set correctly at startup
             toggleSkillButtonVisual('skill-1', spreadShotActive);
             toggleSkillButtonVisual('skill-3', isFiring);
             
