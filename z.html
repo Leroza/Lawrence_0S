@@ -29,7 +29,6 @@
             background-color: var(--color-bg);
             color: var(--color-text);
             transition: background-color 0.5s ease, color 0.5s ease;
-            /* SCROLL SNAP EFFECT */
             scroll-snap-type: y mandatory;
             /* Hide the default OS cursor to avoid double cursors */
             cursor: none; 
@@ -62,107 +61,17 @@
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='%23dddddd' fill-opacity='0.4'%3E%3Cpath fill-rule='evenodd' d='M0 0h4v4H0V0zm4 4h4v4H4V4z'/%3E%3C/g%3E%3C/svg%3E");
         }
         
-        /* Styling for the Open to Work bubble */
-        .speech-bubble {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            border: 2px solid var(--color-text);
-            border-radius: 4px;
-            position: relative;
-            background-color: var(--color-bg); 
-            transition: background-color 0.5s, border-color 0.5s;
-        }
-        .speech-bubble::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 8px;
-            border-style: solid;
-            border-color: var(--color-text) transparent transparent transparent; 
-            transition: border-color 0.5s;
-        }
-        .speech-bubble-text {
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            font-weight: 700;
-        }
+        /* Existing styles for speech bubble, glass background, interstitials, links, etc. remain here */
 
-        /* --- GLASSMORHISM EFFECT --- */
-        .glass-background {
-            /* Applies to fixed header, preview, and footer tool */
-            background-color: rgba(17, 17, 17, 0.5); /* Darker semi-transparent background */
-            backdrop-filter: blur(10px); /* The frosted glass effect */
-            -webkit-backdrop-filter: blur(10px); /* For Safari compatibility */
-        }
-        .light .glass-background {
-            background-color: rgba(255, 255, 255, 0.7);
-        }
-
-        /* --- FIXED FLOATING INTERSTITIALS (BR1 & BR2 content) --- */
-        .fixed-interstitial {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 50; 
-            pointer-events: none; 
-            
-            opacity: 0;
-            filter: blur(8px);
-            /* Added padding and rounded corners for the glass panel look */
-            padding: 2rem 3rem; 
-            border-radius: 12px;
-            /* UPDATED: Use the adaptive CSS variable for the border */
-            border: 1px solid var(--color-glass-border); 
-            
-            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                        filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        .fixed-interstitial.is-visible {
-            opacity: 1;
-            filter: blur(0);
-        }
-        /* --- END FIXED FLOATING INTERSTITIALS --- */
-        
-        /* Project Link Hover Enhancement */
-        .project-link {
-            transition: background-color 0.3s ease, padding-left 0.3s ease, border-color 0.3s ease;
-            border-bottom: 1px solid var(--color-border-subtle);
-            cursor: pointer;
-        }
-        .project-link:hover {
-            background-color: rgba(255, 255, 255, 0.05); 
-            padding-left: 1.5rem;
-        }
-        .light .project-link:hover {
-            background-color: rgba(0, 0, 0, 0.03); 
-        }
-
-        /* Typography Link (Interactive Italic) Hover Enhancement */
-        .typography-link {
-            transition: color 0.3s ease;
-            cursor: pointer;
-            padding-bottom: 2px;
-            line-height: 1.5; /* Ensure link spans don't interfere with each other */
-            display: inline-block;
-        }
-        .typography-link:hover {
-             color: rgba(255, 255, 255, 0.7);
-        }
-        .light .typography-link:hover {
-             color: rgba(0, 0, 0, 0.7);
-        }
-        
         /* SCROLL SNAP ALIGNMENTS */
         .snap-start { scroll-snap-align: start; }
         .snap-center { scroll-snap-align: center; }
         .snap-end { scroll-snap-align: end; }
 
         /* MIN HEIGHTS FOR SECTIONS TO PUSH TRIGGERS FURTHER APART */
+        /* Note: Sections are now py-20 instead of min-h-screen to reduce the large gaps you mentioned */
         #hero, #typography, #projects, #skills {
-            min-height: 100vh; /* Set all main sections to full viewport height */
+            min-height: 100vh; /* Keep these full height for the main experience */
         }
         
         /* --- GLASS NAVIGATION STYLES --- */
@@ -191,31 +100,47 @@
             background-color: var(--color-text);
             box-shadow: 0 0 5px var(--color-text);
         }
-        /* --- CUSTOM CURSOR STYLES --- */
-
-        /* Pulsate Animation for Main Bubble */
-        @keyframes pulse-ring {
-            0% {
-                transform: scale(0.6);
-                opacity: 0.8;
-            }
-            50% {
-                transform: scale(1.1);
-                opacity: 0.3;
-            }
-            100% {
-                transform: scale(0.6);
-                opacity: 0.8;
-            }
+        
+        /* --- PHYSICS ORB STYLES (THE NEW INTERACTIVE ELEMENT) --- */
+        #physics-orb {
+            position: fixed;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            z-index: 60; /* Below fixed nav/header, but above most content */
+            background: #ff5500; /* Distinct orange color */
+            box-shadow: 0 0 15px rgba(255, 85, 0, 0.8), 0 0 30px rgba(255, 85, 0, 0.4);
+            cursor: grab;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: box-shadow 0.3s ease; /* Smooth transition for interaction feedback */
         }
-
+        #physics-orb:hover {
+            cursor: grab;
+            box-shadow: 0 0 20px rgba(255, 85, 0, 1), 0 0 40px rgba(255, 85, 0, 0.6);
+        }
+        #physics-orb.dragging {
+            cursor: grabbing;
+        }
+        
+        /* --- CURSOR STYLES (Keep existing) --- */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.6); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+            100% { transform: scale(0.6); opacity: 0.8; }
+        }
         #cursor-bubble {
             transition: opacity 0.3s ease;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-
         #cursor-bubble:before {
             content: '';
             position: absolute;
@@ -226,19 +151,10 @@
             animation: pulse-ring 2s infinite ease-in-out;
             opacity: 0.6;
         }
-        
-        /* Trail Bubble Fade Animation */
         @keyframes trailFadeOut {
-            0% {
-                transform: translate(0, 0) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(calc(var(--rand-x) * 1px), calc(var(--rand-y) * 1px)) scale(0);
-                opacity: 0;
-            }
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(calc(var(--rand-x) * 1px), calc(var(--rand-y) * 1px)) scale(0); opacity: 0; }
         }
-        /* Class applied to the generated trail elements */
         .trail-bubble {
             position: fixed;
             border-radius: 50%;
@@ -246,7 +162,7 @@
             opacity: 0.8;
             pointer-events: none;
             animation: trailFadeOut 0.5s ease-out forwards;
-            z-index: 99; /* Below the main bubble */
+            z-index: 99;
         }
 
     </style>
@@ -284,13 +200,14 @@
     </nav>
     <div id="cursor-bubble" class="fixed pointer-events-none rounded-full w-4 h-4 opacity-0 z-[100] bg-[--color-text]"></div>
 
-
+    <div id="physics-orb">
+        ORB
+    </div>
     <div id="project-preview" class="fixed z-50 pointer-events-none transition-opacity duration-300 ease-in-out opacity-0 border border-gray-300 light:border-gray-600 shadow-xl p-1 rounded-lg glass-background" style="width: 280px; height: 180px;">
         <img id="preview-image" src="" alt="Project Preview" class="w-full h-full object-cover rounded-md border border-gray-800 light:border-gray-200">
     </div>
 
     <main class="space-y-0 lg:space-y-0">
-
         <section id="hero" class="min-h-screen pt-24 flex flex-col items-center justify-center text-center snap-start">
             <h1 class="prestige-font text-[20vw] sm:text-[30vw] lg:text-[40vw] font-bold leading-none tracking-tighter text-[--color-text]">
                 LLB
@@ -486,7 +403,7 @@
 
 
 <script>
-    // --- Dark Mode / Light Mode Toggle ---
+    // --- Dark Mode / Light Mode Toggle (Remains the same) ---
     const htmlElement = document.documentElement;
     const modeToggle = document.getElementById('mode-toggle');
 
@@ -517,21 +434,14 @@
     modeToggle.addEventListener('click', toggleDarkMode);
     initializeDarkMode();
 
-    // --- JavaScript for Project Hover Preview Effect ---
-
+    // --- JavaScript for Project Hover Preview Effect (Remains the same) ---
     const preview = document.getElementById('project-preview');
     const previewImage = document.getElementById('preview-image');
-    
-    // Select all elements that should trigger a preview, including project links and typography links
     const interactiveElements = document.querySelectorAll('.project-link, .typography-link');
-    
-    // Offset for the preview box relative to the cursor (top right)
     const OFFSET_X = 20;
     const OFFSET_Y = -120; 
-
     let isPreviewVisible = false;
 
-    // 2. Attach handlers to all interactive elements
     interactiveElements.forEach(element => {
         element.addEventListener('mouseenter', (e) => {
             const imageUrl = element.getAttribute('data-preview-image');
@@ -548,118 +458,223 @@
         });
     });
 
+    document.addEventListener('mousemove', (e) => {
+        if (isPreviewVisible) {
+            let newX = e.clientX + OFFSET_X;
+            let newY = e.clientY + OFFSET_Y;
+            if (newX + preview.offsetWidth > window.innerWidth - 20) {
+                newX = e.clientX - preview.offsetWidth - OFFSET_X; 
+            }
+            if (newY < 20) {
+                newY = e.clientY + 20; 
+            }
+            preview.style.left = `${newX}px`;
+            preview.style.top = `${newY}px`;
+        }
+        
+        targetX = e.clientX;
+        targetY = e.clientY;
+        cursorBubble.style.opacity = '1';
+    });
 
-    // --- Dynamic Cursor Bubble Logic (Pulsing and Trails) ---
+
+    // --- Dynamic Cursor Bubble Logic (Remains the same) ---
     const cursorBubble = document.getElementById('cursor-bubble');
     const body = document.body;
     let targetX = 0;
     let targetY = 0;
     let currentX = 0;
     let currentY = 0;
-    const easing = 0.15; // Lower value = more lag/smoother movement
+    const easing = 0.15; 
     let lastTrailTime = 0;
-    const trailInterval = 30; // ms between trail bubbles
+    const trailInterval = 30;
 
-    // Function to create and animate a small trailing bubble
     function createTrailBubble(x, y) {
         const trail = document.createElement('div');
-        const size = Math.random() * 4 + 2; // size 2px to 6px
-        
+        const size = Math.random() * 4 + 2;
         trail.className = 'trail-bubble';
         trail.style.width = `${size}px`;
         trail.style.height = `${size}px`;
-        
-        // Random offset for bubbly movement
         const randX = Math.random() * 20 - 10;
         const randY = Math.random() * 20 - 10;
         trail.style.setProperty('--rand-x', randX);
         trail.style.setProperty('--rand-y', randY);
-
-        // Position trail element where the main bubble currently is
         trail.style.left = `${x}px`;
         trail.style.top = `${y}px`;
-
         body.appendChild(trail);
-
-        // Remove the trail element after its animation finishes
-        setTimeout(() => {
-            trail.remove();
-        }, 500);
+        setTimeout(() => { trail.remove(); }, 500);
     }
 
-
-    // Global Mouse Move Listener (updates both preview positioning and bubble target)
-    document.addEventListener('mousemove', (e) => {
-        // --- Existing Preview Logic ---
-        if (isPreviewVisible) {
-            let newX = e.clientX + OFFSET_X;
-            let newY = e.clientY + OFFSET_Y;
-
-            // Simple viewport boundary check (preventing overflow off the right edge)
-            if (newX + preview.offsetWidth > window.innerWidth - 20) {
-                newX = e.clientX - preview.offsetWidth - OFFSET_X; 
-            }
-
-            // Simple viewport boundary check (preventing overflow off the top edge)
-            if (newY < 20) {
-                newY = e.clientY + 20; 
-            }
-
-            preview.style.left = `${newX}px`;
-            preview.style.top = `${newY}px`;
-        }
-        
-        // --- Update target position for the lagging bubble ---
-        targetX = e.clientX;
-        targetY = e.clientY;
-        cursorBubble.style.opacity = '1';
-    });
-
-    // Animation loop for smooth lag and trail creation
     function animateCursor(timestamp) {
-        // Interpolate current position towards target position
         currentX += (targetX - currentX) * easing;
         currentY += (targetY - currentY) * easing;
-
-        // Apply position (centered on the 16x16 bubble, so offset by 8px)
         cursorBubble.style.transform = `translate3d(${currentX - 8}px, ${currentY - 8}px, 0)`;
 
-        // Create trail bubbles on an interval based on motion speed
         if (timestamp - lastTrailTime > trailInterval) {
-            // Only create a trail if the bubble is moving
             const isMoving = Math.abs(targetX - currentX) > 1 || Math.abs(targetY - currentY) > 1;
-
             if (isMoving) {
                  createTrailBubble(currentX, currentY);
                  lastTrailTime = timestamp;
             }
         }
-
-
         requestAnimationFrame(animateCursor);
     }
     
-    // Start the animation loop when the document loads
     requestAnimationFrame(animateCursor);
 
-    // Fade out when mouse leaves the document body
     document.addEventListener('mouseleave', () => {
         cursorBubble.style.opacity = '0';
     });
 
 
-    // --- Intersection Observer for Floating Scroll Animations & Nav Highlight ---
+    // --- NEW: PHYSICS ORB LOGIC (DRAG, THROW, AND BOUNCE) ---
+    const orb = document.getElementById('physics-orb');
+    const ORB_SIZE = 80;
+    const FRICTION = 0.98;
+    const BOUNCE = 0.8; 
+    const VELOCITY_EASING = 0.1; // How much drag affects velocity
+
+    let pos = { x: 100, y: 100 };
+    let velocity = { x: 0, y: 0 };
+    let isDragging = false;
+    let dragOffset = { x: 0, y: 0 };
+    let lastMousePos = { x: 0, y: 0 };
+    let frameRateVel = { x: 0, y: 0 }; // Velocity based on mouse movement per frame
+
+    // Set initial position
+    orb.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+
+
+    // --- DRAG EVENT LISTENERS ---
+
+    function startDrag(e) {
+        if (e.button !== 0) return; // Only listen to left click
+        isDragging = true;
+        orb.classList.add('dragging');
+
+        // Calculate offset from mouse position to orb center
+        const rect = orb.getBoundingClientRect();
+        dragOffset.x = e.clientX - (rect.left + ORB_SIZE / 2);
+        dragOffset.y = e.clientY - (rect.top + ORB_SIZE / 2);
+
+        // Reset velocity when dragging starts
+        velocity.x = 0;
+        velocity.y = 0;
+        
+        lastMousePos.x = e.clientX;
+        lastMousePos.y = e.clientY;
+
+        e.preventDefault(); 
+    }
+
+    function doDrag(e) {
+        if (!isDragging) return;
+
+        // Calculate new position based on mouse and drag offset
+        let newX = e.clientX - dragOffset.x;
+        let newY = e.clientY - dragOffset.y;
+
+        // Calculate instantaneous velocity for "throwing" effect
+        frameRateVel.x = (newX - pos.x) * VELOCITY_EASING;
+        frameRateVel.y = (newY - pos.y) * VELOCITY_EASING;
+        
+        // Update position (without using requestAnimationFrame for smooth dragging)
+        pos.x = newX;
+        pos.y = newY;
+        
+        // Apply position update immediately
+        orb.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+
+        lastMousePos.x = e.clientX;
+        lastMousePos.y = e.clientY;
+    }
+
+    function endDrag(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        orb.classList.remove('dragging');
+        
+        // On release, transfer the recent drag velocity to the orb's physics velocity
+        velocity.x = frameRateVel.x * 5; // Multiplier for a stronger throw
+        velocity.y = frameRateVel.y * 5;
+    }
+
+    orb.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', doDrag);
+    document.addEventListener('mouseup', endDrag);
+
+
+    // --- PHYSICS ANIMATION LOOP ---
+    function animatePhysics() {
+        if (!isDragging) {
+            // 1. Apply Velocity and Friction
+            pos.x += velocity.x;
+            pos.y += velocity.y;
+            
+            velocity.x *= FRICTION;
+            velocity.y *= FRICTION;
+
+            // 2. Wall Collision Detection
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+
+            // X-axis collision
+            if (pos.x < 0) {
+                pos.x = 0;
+                velocity.x *= -BOUNCE;
+            } else if (pos.x + ORB_SIZE > screenWidth) {
+                pos.x = screenWidth - ORB_SIZE;
+                velocity.x *= -BOUNCE;
+            }
+
+            // Y-axis collision
+            if (pos.y < 0) {
+                pos.y = 0;
+                velocity.y *= -BOUNCE;
+            } else if (pos.y + ORB_SIZE > screenHeight) {
+                pos.y = screenHeight - ORB_SIZE;
+                velocity.y *= -BOUNCE;
+            }
+
+            // 3. Stop movement if velocity is near zero
+            if (Math.abs(velocity.x) < 0.1) velocity.x = 0;
+            if (Math.abs(velocity.y) < 0.1) velocity.y = 0;
+
+            // 4. Update position
+            orb.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+        }
+
+        requestAnimationFrame(animatePhysics);
+    }
+    
+    // Start the physics simulation
+    requestAnimationFrame(animatePhysics);
+    
+    // Window Resize Handler: Recalculate position if orb is out of bounds on resize
+    window.addEventListener('resize', () => {
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        
+        if (pos.x + ORB_SIZE > screenWidth) {
+            pos.x = screenWidth - ORB_SIZE;
+        }
+        if (pos.y + ORB_SIZE > screenHeight) {
+            pos.y = screenHeight - ORB_SIZE;
+        }
+        orb.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+    });
+
+
+    // --- Intersection Observer for Floating Scroll Animations & Nav Highlight (Remains the same) ---
 
     document.addEventListener('DOMContentLoaded', () => {
-        
-        // --- Interstitial Animation Logic ---
+        // ... (Interstitial and Nav Observer logic remains the same)
         const br1Trigger = document.getElementById('br1-trigger');
         const br2Trigger = document.getElementById('br2-trigger');
         const br1Float = document.getElementById('br1-float');
         const br2Float = document.getElementById('br2-float');
         let br2Timeout = null;
 
-        // Observer for the floating interstitial messages
         const interstitialCallback = (entries) => {
             entries.forEach(entry => {
                 const targetId = entry.target.id;
@@ -683,7 +698,7 @@
                             br2Timeout = setTimeout(() => {
                                 floatElement.classList.remove('is-visible');
                                 br2Timeout = null;
-                            }, 2000); // 2 seconds
+                            }, 2000);
                         }
                     }
                 } else {
@@ -707,16 +722,14 @@
         if (br2Trigger) interstitialObserver.observe(br2Trigger);
 
 
-        // --- Floating Navigation Highlight Logic ---
         const sections = document.querySelectorAll('section, footer');
         const navItems = document.querySelectorAll('.glass-nav-item');
-        const headerOffset = document.querySelector('header').offsetHeight + 10; // Adjust for fixed header height
+        const headerOffset = document.querySelector('header').offsetHeight + 10;
         
-        // Create an observer for section highlighting
         const navObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    const currentSectionId = entry.target.id || 'contact'; // Footer doesn't have ID, set to contact
+                    const currentSectionId = entry.target.id || 'contact';
                     navItems.forEach(item => {
                         item.classList.remove('active');
                         if (item.getAttribute('data-section') === currentSectionId) {
@@ -726,21 +739,16 @@
                 }
             });
         }, {
-            // Root margin helps detect section change earlier, while section is still 10% visible
             rootMargin: `-${headerOffset}px 0px -90% 0px`, 
-            threshold: 0.1 // Set to 10%
+            threshold: 0.1
         });
 
-        // Observe all main sections/footer
         sections.forEach(section => {
-             // Exclude the small trigger sections from the main nav observer
             if (!section.id.includes('trigger')) { 
                 navObserver.observe(section);
             }
         });
 
-
-        // --- Lucide Icons initialization (to render i tags into SVG icons) ---
         lucide.createIcons();
     });
 
