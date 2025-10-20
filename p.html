@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leroza.dev - Retro Portfolio [CRT v3]</title>
+    <title>Leroza.dev - Retro OS Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Retro Terminal Font -->
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Social Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
         /* Define Custom Colors for Theme */
@@ -26,14 +28,16 @@
         body {
             cursor: none; /* Hide default cursor */
             font-family: 'VT323', monospace;
-            background-color: var(--color-black); /* True black background for CRT effect */
-            color: var(--color-khaki); /* Main text color */
+            background-color: var(--color-black); 
+            color: var(--color-khaki); 
             height: 100vh;
-            /* Scroll ability maintained by browser auto-overflow */
+            /* Use smooth scrolling for navigation links */
+            scroll-behavior: smooth; 
+            /* Scroll snap is kept for a screen-by-screen feel */
             scroll-snap-type: y mandatory;
             padding-bottom: 70px; 
             position: relative;
-            overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+            overflow-x: hidden;
         }
 
         section {
@@ -42,41 +46,24 @@
             align-items: center;
             justify-content: center;
             scroll-snap-align: start;
-            padding: 6rem 1rem; /* Increased vertical padding for maximized space */
-            /* Retro glow/shadow: stronger glow on the text */
-            text-shadow: 0 0 5px var(--color-khaki), 0 0 10px rgba(195, 176, 145, 0.4);
+            /* Increased spacing and centered on all devices */
+            padding: 8rem 1rem 6rem 1rem; 
+            text-shadow: 0 0 4px var(--color-khaki), 0 0 8px rgba(195, 176, 145, 0.4); /* Slightly reduced glow */
         }
         
         /* ----------------------------------------------------
-        * CRT SCREEN OVERLAY (Scanlines, Curvature, Bloom)
+        * CRT OVERLAY & GLITCH EFFECTS (Minimal Custom CSS)
         * ---------------------------------------------------- */
         #crt-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 10000;
-            opacity: 0.9;
-            box-shadow: 
-                inset 0 0 100px rgba(0,0,0,0.7), 
-                0 0 10px rgba(0, 0, 0, 0.8);
-            background: 
-                repeating-linear-gradient(
-                    0deg,
-                    rgba(0, 0, 0, 0.2),
-                    rgba(0, 0, 0, 0.3) 1px,
-                    transparent 1px,
-                    transparent 2px
-                );
-            filter: blur(0.3px) contrast(1.1);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 10000; opacity: 0.85; /* Reduced opacity for less confusion */
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.7), 0 0 10px rgba(0, 0, 0, 0.8);
+            background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25) 1px, transparent 1px, transparent 2px); /* Lighter scanlines */
+            filter: blur(0.2px) contrast(1.1); /* Reduced blur */
             transform: perspective(1000px) rotateX(0deg) rotateY(0deg); 
         }
 
-        /* ----------------------------------------------------
-        * GLITCH IDENTITY (Added back from previous version)
-        * ---------------------------------------------------- */
+        /* Glitch Keyframes */
         @keyframes glitchFlicker {
             0%, 70% { text-shadow: 0 0 5px var(--color-maroon), 0 0 10px rgba(80, 0, 0, 0.4); transform: translate(0, 0); }
             75% { text-shadow: 2px 0px 5px var(--color-danger), -2px 0px 5px rgb(0, 255, 255); transform: translate(1px, 0.5px); }
@@ -88,11 +75,11 @@
         #glitching-identity { color: var(--color-khaki); z-index: 51; padding: 10px; }
 
         /*
-        * 2. The Pixel Plane Cursor (FIXED for chunky pixel art)
+        * 2. The Pixel Plane Cursor (Chunky Pixel Art)
         */
         #plane-cursor {
             position: fixed;
-            width: 32px; /* Increased size for chunky pixel art */
+            width: 32px; 
             height: 32px;
             pointer-events: none;
             z-index: 10001;
@@ -106,7 +93,7 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 2px; /* Core pixel size */
+            width: 2px; 
             height: 2px;
             background-color: var(--color-khaki); 
             /* Detailed 5x5 pixel plane structure using 4px offsets */
@@ -131,86 +118,91 @@
             transform: translate(-50%, -50%);
         }
 
-        /*
-        * 3. Bullet Styling
-        */
+        /* ----------------------------------------------------
+        * DYNAMIC ELEMENTS
+        * ---------------------------------------------------- */
         .bullet {
-            position: fixed;
-            width: 8px;
-            height: 8px;
+            position: fixed; width: 8px; height: 8px;
             background-color: var(--color-orange); 
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
+            border-radius: 50%; z-index: 9999;
             box-shadow: 0 0 10px var(--color-orange), 0 0 30px var(--color-orange); 
-            opacity: 1;
-            transition: opacity 0.1s;
-        }
-
-        /*
-        * 4. Text Spans (Destructible Targets)
-        */
-        .destructible-text span {
-            display: inline-block;
-            transition: opacity 0.3s, transform 0.3s, color 0.1s;
-            line-height: 1.2;
-            will-change: transform, color;
+            pointer-events: none;
         }
         
-        .destructible-text span:hover {
-            transform: translateY(-2px) scale(1.05);
-            color: var(--color-orange); 
-            z-index: 10;
-        }
-
+        /* Only apply destruction styles to targets */
         .destroyed {
             opacity: 0 !important;
             transform: scale(0.5) translateY(-20px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        
+        /* Typography Overrides (Maximized Spacing) */
+        .max-type-title {
+            font-size: 8rem; line-height: 0.9; margin-bottom: 2rem;
+        }
+        @media (min-width: 768px) {
+            .max-type-title { font-size: 14rem; }
         }
 
-        /*
-        * 4.1. Chaotic Animation for Skills
-        */
-        @keyframes gruggyWobble {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            25% { transform: translate(-1px, 0px) rotate(-0.5deg); }
-            50% { transform: translate(1px, -1px) rotate(0.5deg); }
-            75% { transform: translate(-1px, 1px) rotate(-0.2deg); }
-            100% { transform: translate(1px, 1px) rotate(0deg); }
+        .max-type-subtitle {
+            font-size: 3rem; line-height: 1.1; margin-top: 3rem; 
         }
-        .chaotic-skill { animation: gruggyWobble 1s infinite alternate; }
-
-        /*
-        * 4.2. Explosion Flash Animation
-        */
-        @keyframes flashExplosion {
-            0% { opacity: 0; background-color: transparent; }
-            5% { opacity: 1; background-color: var(--color-orange); }
-            10% { opacity: 1; background-color: var(--color-white); }
-            20% { opacity: 0; background-color: transparent; }
-            100% { opacity: 0; background-color: transparent; }
+        @media (min-width: 768px) {
+             .max-type-subtitle { font-size: 5rem; }
         }
-        #explosion-flash { z-index: 10002; }
-        .do-explosion { animation: flashExplosion 0.5s forwards; }
-
-        /* ----------------------------------------------------
-        * 5. Retro Life Bar / HUD Styles
-        * ---------------------------------------------------- */
-        .hud-bar {
-            border-top: 6px solid var(--color-khaki);
-            border-bottom: 6px solid var(--color-khaki);
-            background-color: var(--color-maroon);
-            box-shadow: 0 0 15px rgba(255, 140, 0, 0.5); 
+        
+        .max-type-skill-label {
+            font-size: 2.5rem; line-height: 1.1;
         }
-        .health-bar-frame { height: 18px; }
+        
+        /* Project item hover styling adjustments for full width */
+        .folder-item {
+            padding: 1rem 2rem; /* Consistent padding for full-width items */
+            transition: background-color 0.1s, color 0.1s, text-shadow 0.1s;
+        }
 
-        /* 5.1 SKILLS HUD BUTTON STYLES */
-        .skill-button {
-            border: 3px solid var(--color-khaki); 
-            background-color: var(--color-maroon);
+        .folder-item:hover {
+            background-color: rgba(80, 0, 0, 0.6); /* Maroon background highlight */
+            color: var(--color-white); /* Highlight text on hover */
+            text-shadow: 0 0 5px var(--color-white);
+        }
+
+        /* Social Icon Styling */
+        .social-icon {
+            font-size: 2.5rem; /* Large and bold icons */
             color: var(--color-khaki);
-            padding: 2px 6px;
+            transition: color 0.2s, text-shadow 0.2s, transform 0.2s;
+        }
+        .social-icon:hover {
+            color: var(--color-orange);
+            text-shadow: 0 0 10px var(--color-orange);
+            transform: scale(1.05);
+        }
+
+        /* HUD Styling for buttons/frames */
+        .hud-bar {
+            border-top: 6px solid var(--color-maroon);
+            border-bottom: 6px solid var(--color-maroon);
+            background-color: var(--color-khaki); 
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
+        }
+        .health-bar-frame {
+            border: 3px solid var(--color-maroon); 
+            background-color: var(--color-black); 
+            height: 18px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8);
+        }
+        .health-bar-fill {
+            background: linear-gradient(to right, var(--color-danger) 0%, #ffff00 50%, var(--color-safe) 100%);
+            transition: width 0.5s;
+            transform-origin: left;
+        }
+        .skill-button {
+            border: 3px solid var(--color-maroon); 
+            background-color: var(--color-khaki);
+            color: var(--color-maroon);
             box-shadow: 2px 2px 0 var(--color-black), -2px -2px 0 var(--color-maroon);
+            transition: box-shadow 0.1s ease-in-out, background-color 0.1s;
         }
         .skill-button:active, .skill-button.pressed {
             background-color: var(--color-orange); 
@@ -223,124 +215,6 @@
             box-shadow: 0 0 8px var(--color-orange); 
         }
 
-        /*
-        * 5.2 Folder Item Styling (Increased Size)
-        */
-        .folder-item {
-            font-size: 3rem; /* Increased size */
-            padding: 12px; /* Increased padding */
-            color: var(--color-maroon);
-            border-bottom: 2px dashed rgba(80, 0, 0, 0.3);
-        }
-        .folder-item:hover {
-            color: var(--color-white); 
-            background-color: rgba(80, 0, 0, 0.6); 
-            text-shadow: 0 0 5px var(--color-white);
-        }
-
-        /* ----------------------------------------------------
-        * 6. Typography Overrides for Maximized Spacing (FIXED/INCREASED)
-        * ---------------------------------------------------- */
-        .skill-matrix-section {
-            box-shadow: 0 0 20px rgba(195,176,145,0.8), 0 0 5px rgba(255,255,255,0.8);
-            max-width: 90%;
-            width: 100%;
-            border: 6px solid var(--color-khaki);
-            background-color: var(--color-maroon);
-            padding: 2rem; /* Ensure padding is applied */
-        }
-        
-        .max-type-title {
-            font-size: 10rem; /* 160px */
-            line-height: 0.9;
-            margin-bottom: 2rem;
-        }
-        @media (min-width: 768px) {
-            .max-type-title {
-                font-size: 14rem; /* 224px */
-            }
-        }
-
-        .max-type-subtitle {
-            font-size: 5rem; /* 80px */
-            line-height: 1.1;
-            margin-top: 3rem; 
-        }
-        @media (min-width: 768px) {
-             .max-type-subtitle {
-                font-size: 7rem; /* 112px */
-            }
-        }
-        
-        .max-type-skill-label {
-            font-size: 4rem; /* 64px */
-            line-height: 1.1;
-        }
-        
-        /* FIXED: Improved spacing for skills matrix items */
-        .skill-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            padding: 10px 0;
-            margin-bottom: 20px;
-        }
-        
-        .skill-name {
-            flex: 1;
-            text-align: left;
-            margin-right: 20px;
-            word-break: break-word;
-        }
-        
-        .skill-percent {
-            flex-shrink: 0;
-            text-align: right;
-            white-space: nowrap;
-        }
-        
-        /* FIXED: Improved responsive behavior */
-        @media (max-width: 768px) {
-            .max-type-title {
-                font-size: 6rem;
-                line-height: 1;
-            }
-            
-            .max-type-subtitle {
-                font-size: 3rem;
-                line-height: 1.2;
-            }
-            
-            .max-type-skill-label {
-                font-size: 2.5rem;
-            }
-            
-            .skill-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .skill-percent {
-                margin-top: 10px;
-                align-self: flex-end;
-            }
-            
-            .folder-item {
-                font-size: 2rem;
-            }
-        }
-        
-        /* FIXED: Improved section spacing */
-        #skills-matrix {
-            padding-top: 8rem;
-            padding-bottom: 8rem;
-        }
-        
-        #work {
-            padding-top: 8rem;
-            padding-bottom: 8rem;
-        }
     </style>
 </head>
 <body>
@@ -353,19 +227,11 @@
         <div class="plane-body"></div>
     </div>
 
-    <!-- Bullet Container -->
+    <!-- Bullet Container & Effects -->
     <div id="bullet-container"></div>
-
-    <!-- Confetti Container (Kept for shatter effect pieces) -->
     <div id="confetti-container"></div>
-    
-    <!-- Explosion Flash Overlay -->
     <div id="explosion-flash"></div>
-
-    <!-- Victory Glitch Overlay -->
     <div id="victory-glitch"></div>
-
-    <!-- NEW: Project Preview Overlay (Fixed to screen) -->
     <div id="project-preview" class="fixed top-0 left-0 hidden z-20 pointer-events-none opacity-0">
         <div id="preview-box" class="p-2 border-4 border-[var(--color-orange)] bg-[var(--color-black)] text-[var(--color-khaki)] shadow-lg" style="width: 400px;">
             <p class="text-xl mb-2 text-center border-b border-[var(--color-khaki)]">FILE\_PREVIEW.IMG</p>
@@ -373,12 +239,12 @@
         </div>
     </div>
 
-    <!-- NEW: Top-Left Glitching Identity (Isolated from HUD) -->
+    <!-- Top-Left Glitching Identity (OS Title) -->
     <div id="glitching-identity" class="fixed top-0 left-0 text-xl md:text-3xl font-extrabold tracking-widest hidden sm:block constant-glitch">
         LEROZA.<span id="glitch-title" class="text-[var(--color-orange)]">DEV</span>
     </div>
 
-    <!-- Header / LIFEBAR HUD (Fixed to the BOTTOM) -->
+    <!-- HUD / TASKBAR (Fixed to the BOTTOM) -->
     <header id="hud-bar" class="fixed bottom-0 left-0 right-0 z-50 p-3 hud-bar">
         <nav class="flex justify-between items-center max-w-7xl mx-auto w-full text-lg">
             
@@ -393,113 +259,163 @@
                     </div>
                 </div>
 
-                <!-- Skills HUD -->
+                <!-- Skills/Toggles HUD -->
                 <div id="skills-hud" class="hidden sm:flex space-x-2 text-sm font-bold">
-                    <span id="skill-1" class="skill-button cursor-pointer on">[1] SPREAD: OFF</span>
-                    <span id="skill-2" class="skill-button cursor-pointer">[2] REPAIR (5%)</span>
-                    <span id="skill-3" class="skill-button cursor-pointer on">[3] GUN: ACTIVE</span>
+                    <span id="skill-1" class="skill-button cursor-pointer on px-2 py-1">[1] SPREAD: OFF</span>
+                    <span id="skill-2" class="skill-button cursor-pointer px-2 py-1">[2] REPAIR (5%)</span>
+                    <span id="skill-3" class="skill-button cursor-pointer on px-2 py-1">[3] GUN: ACTIVE</span>
                 </div>
             </div>
 
             <!-- Group 2 (Right: Navigation Links) -->
             <div class="flex space-x-4 md:space-x-6 text-base font-bold">
                 <a href="#intro" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ HOME ]</a>
-                <a href="#skills-matrix" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ MATRIX ]</a>
-                <a href="#work" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ PROJECTS ]</a>
+                <a href="#about" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ ABOUT ]</a>
+                <a href="#skills" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ SKILLS ]</a>
+                <a href="#projects" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ PROJECTS ]</a>
                 <a href="#contact" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ CONNECT ]</a>
             </div>
         </nav>
     </header>
 
-    <!-- SECTION 1: INTRO (Maroon Background) -->
+    <!-- SECTION 1: HOME (Maroon Background) -->
     <section id="intro" class="bg-[var(--color-maroon)]">
         <div class="text-center max-w-7xl px-4">
             
             <h2 class="max-type-title font-extrabold text-[var(--color-khaki)] destructible-text" data-section="intro">
-                LEROZA.DEV 
+                OS // LEROZA.DEV 
             </h2>
-            <p class="max-type-subtitle font-light text-[var(--color-white)] destructible-text" data-section="intro">
-                RETRO-TERMINAL // INTERFACE.
+            <p class="max-type-subtitle font-light text-[var(--color-white)]" data-section="intro">
+                SYSTEM INITIATED. TARGETS ONLINE.
             </p>
-            <p class="max-type-subtitle font-light text-[var(--color-white)] mt-8 text-2xl md:text-4xl destructible-text" data-section="intro">
-                DESTROY ALL TARGETS TO UNLOCK FINAL SCORE.
+            <p class="max-type-subtitle font-light text-[var(--color-white)] mt-8 text-2xl md:text-4xl" data-section="intro">
+                DESTROY ALL TARGETS FOR OPTIONAL BONUS.
             </p>
         </div>
     </section>
 
-    <!-- NEW SECTION: SKILL MATRIX (Khaki Background) - Dedicated Section -->
-    <section id="skills-matrix" class="bg-[var(--color-khaki)]">
-        <div class="text-center max-w-7xl px-4 text-[var(--color-maroon)]">
+    <!-- SECTION 2: ABOUT (Khaki Background) - Clean, stable text -->
+    <section id="about" class="bg-[var(--color-khaki)]">
+        <div class="text-center w-full max-w-7xl px-4 text-[var(--color-maroon)]">
+             <h2 class="max-type-title font-extrabold destructible-text mb-12" data-section="about">
+                USER_FILE
+            </h2>
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-center gap-12">
+                
+                <!-- Avatar/Image Placeholder -->
+                <div class="w-full md:w-1/3 flex justify-center mb-8 md:mb-0">
+                     <img src="https://placehold.co/250x250/500000/C3B091?text=AVATAR" 
+                          alt="Leroza Avatar" 
+                          class="border-8 border-[var(--color-maroon)] shadow-2xl rounded-none" 
+                          style="box-shadow: 0 0 30px rgba(80, 0, 0, 0.8);">
+                </div>
+
+                <!-- Text Content (Now static and easy to read) -->
+                <div class="w-full md:w-2/3 text-left space-y-8 text-2xl md:text-4xl">
+                    <p data-section="about">
+                        // REPORT\_001: Leroza is a Frontend Combat Specialist dedicated to creating **elegant, high-performance web experiences**. Expertise: translating complex designs into robust, pixel-perfect UIs.
+                    </p>
+                    <p data-section="about">
+                        // REPORT\_002: Focus on modern JavaScript frameworks (React/Next.js) and clean, scalable architecture. Deployment Status: **Active**. Mission Objective: Deliver visually stunning applications.
+                    </p>
+                    <a href="#contact" class="inline-block px-4 py-2 text-xl font-bold bg-[var(--color-maroon)] text-[var(--color-khaki)] rounded-none border-2 border-[var(--color-maroon)] hover:bg-[var(--color-orange)] hover:text-white transition duration-300 mt-4">
+                        [INITIATE\_CONTACT\_PROTOCOL]
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: SKILLS (Maroon Background) - Dedicated Matrix -->
+    <section id="skills" class="bg-[var(--color-maroon)]">
+        <div class="text-center max-w-7xl px-4 text-[var(--color-khaki)]">
             <h2 class="max-type-title font-extrabold mb-12 destructible-text" data-section="skills">
                 SKILL_MATRIX
             </h2>
             
-            <div class="skill-matrix-section text-left w-full md:w-[900px] p-8 md:p-12 relative">
+            <div class="skill-matrix-section text-left w-full md:w-[900px] p-8 md:p-12 relative mx-auto">
                 
                 <h3 class="max-type-subtitle font-extrabold text-[var(--color-khaki)] mb-8 border-b-4 border-b-[var(--color-khaki)] pb-2 text-[var(--color-khaki)]">
                     PROGRAMMING // CAPACITIES
                 </h3>
                 
-                <div id="skill-list" class="grid grid-cols-1 gap-x-16 gap-y-10"> 
-                    <!-- Skills will be populated here by JS -->
+                <div id="skill-list" class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10"> 
+                    <!-- Skills populated by JS - These remain targets -->
                 </div>
 
                 <p class="max-type-subtitle font-extralight text-[var(--color-khaki)] mt-12 text-[var(--color-khaki)]">
-                    TARGET PERCENTAGES.
+                    // PERCENTAGES ARE TARGETS. DESTROY ALL TO PROVE MASTERY.
                 </p>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 3: WORK (Maroon Background) -->
-    <section id="work" class="bg-[var(--color-maroon)]">
-        <div class="text-center max-w-7xl px-4 text-[var(--color-khaki)]">
-            <h2 class="max-type-title font-extrabold mb-12 destructible-text" data-section="work">
+    <!-- SECTION 4: PROJECTS (Khaki Background) -->
+    <section id="projects" class="bg-[var(--color-khaki)]">
+        <div class="text-center w-full px-4 text-[var(--color-maroon)]">
+            <h2 class="max-type-title font-extrabold mb-12 destructible-text" data-section="projects">
                 PROJECT_LOG
             </h2>
-            <!-- New Folder List Structure -->
-            <div id="project-folder-list" class="mt-16 text-left max-w-3xl mx-auto space-y-4">
+            <!-- New Folder List Structure - Stretched across the viewport -->
+            <div id="project-folder-list" class="mt-16 text-left w-full mx-auto space-y-4">
                 
-                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="work" 
-                    onmouseover="showPreview(event, 'https://placehold.co/400x250/500000/C3B091?text=GAME+UI+SCREENSHOT')"
+                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="projects" 
+                    onmouseover="showPreview(event, 'https://placehold.co/400x250/500000/C3B091?text=REAL-TIME\_MMO\_COMBAT\_UI')"
                     onmouseout="hidePreview()">
-                    > [DIR] GAME\_UI\_V1 (2024)
+                    > [DIR] REAL-TIME\_MMO\_COMBAT\_UI\_SYSTEM (2024)
                 </div>
                 
-                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="work" 
-                    onmouseover="showPreview(event, 'https://placehold.co/400x250/C3B091/500000?text=WEB+APP+DASHBOARD')"
+                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="projects" 
+                    onmouseover="showPreview(event, 'https://placehold.co/400x250/C3B091/500000?text=FULL\_STACK\_ANALYTICS\_DASHBOARD')"
                     onmouseout="hidePreview()">
-                    > [DIR] WEB\_APP\_V2 (2023)
+                    > [DIR] FULL\_STACK\_ANALYTICS\_DASHBOARD\_PLATFORM (2023)
                 </div>
                 
-                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="work" 
-                    onmouseover="showPreview(event, 'https://placehold.co/400x250/ff8c00/FFFFFF?text=3D+MODEL+RENDER')"
+                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="projects" 
+                    onmouseover="showPreview(event, 'https://placehold.co/400x250/ff8c00/FFFFFF?text=WEBSOCKETS\_AND\_THREEJS\_3D')"
                     onmouseout="hidePreview()">
-                    > [DIR] 3D\_ASSETS\_PACK (2022)
+                    > [DIR] WEBSOCKETS\_AND\_THREEJS\_3D\_ENVIRONMENT (2022)
                 </div>
                 
-                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="work" 
-                    onmouseover="showPreview(event, 'https://placehold.co/400x250/00ff00/500000?text=AI+BOT+INTEGRATION')"
+                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="projects" 
+                    onmouseover="showPreview(event, 'https://placehold.co/400x250/00ff00/500000?text=GENERATIVE\_AI\_NATURAL\_LANGUAGE')"
                     onmouseout="hidePreview()">
-                    > [FILE] AI\_ENGINE\_V1.EXE
+                    > [FILE] GENERATIVE\_AI\_NATURAL\_LANGUAGE\_ENGINE\_V1.EXE
                 </div>
                 
             </div>
         </div>
     </section>
 
-    <!-- SECTION 4: CONTACT (Khaki Background) -->
-    <section id="contact" class="bg-[var(--color-khaki)]">
-        <div class="text-center max-w-7xl px-4 text-[var(--color-maroon)]">
+    <!-- SECTION 5: CONTACT (Maroon Background) -->
+    <section id="contact" class="bg-[var(--color-maroon)]">
+        <div class="text-center max-w-7xl px-4 text-[var(--color-khaki)]">
             <h2 class="max-type-title font-extrabold mb-12 destructible-text" data-section="contact">
-                GAME OVER.
+                SYSTEM_SHUTDOWN
             </h2>
-            <p class="max-type-subtitle font-light text-[var(--color-maroon)] mt-8 destructible-text" data-section="contact">
-                LEROZA@DEV.IO
+            <p class="max-type-subtitle font-light text-[var(--color-white)] mt-8" data-section="contact">
+                LEROZA@DEV.IO // TERMINATION POINT
             </p>
+
+            <!-- Social Icons -->
+            <div class="flex justify-center space-x-12 mt-12 mb-16">
+                <a href="https://github.com/leroza" target="_blank" aria-label="GitHub" class="social-icon">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://linkedin.com/in/leroza" target="_blank" aria-label="LinkedIn" class="social-icon">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="mailto:leroza@dev.io" aria-label="Email" class="social-icon">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="https://facebook.com/leroza" target="_blank" aria-label="Facebook" class="social-icon">
+                    <i class="fab fa-facebook"></i>
+                </a>
+            </div>
+
             <div class="mt-16">
                 <!-- Contact Button: Hard lines, orange hover, inverse colors -->
-                <a href="mailto:leroza@dev.io" class="inline-block px-10 py-6 text-3xl font-bold bg-[var(--color-maroon)] text-[var(--color-khaki)] rounded-none shadow-2xl border-4 border-white hover:bg-[var(--color-orange)] hover:text-white transition duration-300 transform hover:scale-105">
+                <a href="mailto:leroza@dev.io" class="inline-block px-10 py-6 text-3xl font-bold bg-[var(--color-khaki)] text-[var(--color-maroon)] rounded-none shadow-2xl border-4 border-white hover:bg-[var(--color-orange)] hover:text-white transition duration-300 transform hover:scale-105">
                     INITIATE_CONTACT
                 </a>
             </div>
@@ -521,23 +437,21 @@
         const previewImage = document.getElementById('preview-image');
         const previewBox = document.getElementById('preview-box');
 
-        // UPDATED CONSTANTS for shooting fix
+        // Core Game Constants
         const BULLET_SPEED = 20; 
         const FIRE_RATE = 100; 
         const REPAIR_AMOUNT = 5; 
 
-        // Consolidated Skill Data (Updated from original list)
+        // Consolidated Skill Data (Updated list for richer content)
         const SKILL_DATA = [
-            { name: "HTML", percent: 95, color: '#ff8c00' }, 
-            { name: "CSS/SASS", percent: 85, color: '#ff8c00' },
-            { name: "TAILWIND/BOOSTRAP", percent: 90, color: '#ff8c00' },
+            { name: "HTML/CSS/TAILWIND", percent: 95, color: '#ff8c00' }, 
             { name: "JAVASCRIPT (ES6+)", percent: 95, color: '#00ff00' },
-            { name: "REACT/NEXT.JS", percent: 80, color: '#00ff00' },
-            { name: "TYPESCRIPT", percent: 75, color: '#00ff00' },
-            { name: "NODE/EXPRESS", percent: 70, color: '#ffff00' },
-            { name: "PHP/LARAVEL", percent: 70, color: '#ffff00' },
-            { name: "FIREBASE/MONGO", percent: 85, color: '#ff0000' },
-            { name: "GIT/CI/CD", percent: 90, color: '#00ff00' },
+            { name: "REACT/NEXT.JS", percent: 90, color: '#00ff00' },
+            { name: "TYPESCRIPT", percent: 85, color: '#00ff00' },
+            { name: "NODE/EXPRESS", percent: 80, color: '#ffff00' },
+            { name: "FIREBASE/MONGO", percent: 75, color: '#ff0000' },
+            { name: "UX/UI DESIGN", percent: 90, color: '#ff8c00' }, 
+            { name: "VERSION CONTROL (GIT)", percent: 95, color: '#00ff00' },
         ];
 
         // --- State Variables ---
@@ -548,40 +462,41 @@
         let targets = []; 
         let totalTargets = 0;
         let destroyedTargets = 0;
-        let gameOver = false;
+        let gameOver = false; // Only tracks if *all* targets were destroyed
         let hideTimeout;
         let spreadShotActive = false;
         let isFiring = true; 
         
         /**
-         * 1. Populate the skill card with destructible percentage targets (in the new dedicated section).
+         * 1. Populates the dedicated skill matrix section with destructible targets.
          */
         function setupSkillsMatrixSection() {
-            // Remove old skill targets if they exist from a previous run
+            // Clear existing targets only for the skill list area
             targets = targets.filter(span => !span.closest('#skill-list')); 
             skillListElement.innerHTML = ''; 
 
             SKILL_DATA.forEach(skill => {
                 const skillLine = document.createElement('div');
-                skillLine.className = `skill-item chaotic-skill destructible-text max-type-skill-label`;
+                // Removed 'chaotic-skill' class for stability and clarity, but kept destructible-text
+                skillLine.className = `max-type-skill-label destructible-text font-light flex flex-col md:flex-row items-start md:items-center justify-between space-y-2 md:space-y-0`;
                 skillLine.style.animationDelay = `-${Math.random()}s`;
 
-                // Non-destructible name (Maroon text on Khaki section)
-                const nameContainer = document.createElement('div');
-                nameContainer.className = 'skill-name text-[var(--color-maroon)]';
+                // Name (Static White text for high contrast inside the maroon skill box)
+                const nameContainer = document.createElement('span');
+                nameContainer.className = 'skill-name text-white mr-4'; 
                 nameContainer.textContent = `${skill.name}`;
                 skillLine.appendChild(nameContainer);
 
                 // Destructible part (Percentage)
-                const percentContainer = document.createElement('div');
-                percentContainer.className = 'skill-percent';
+                const percentContainer = document.createElement('span');
+                percentContainer.className = 'flex';
 
                 const destructibleText = `${skill.percent}%`;
                 destructibleText.split('').forEach(char => {
                     const span = document.createElement('span');
                     span.textContent = char === ' ' ? '\u00A0' : char; 
                     span.dataset.destroyed = 'false';
-                    span.style.color = skill.color; 
+                    span.style.color = skill.color; // Color-coded by strength
                     
                     percentContainer.appendChild(span);
                     
@@ -593,25 +508,26 @@
                 skillLine.appendChild(percentContainer);
                 skillListElement.appendChild(skillLine);
             });
-            
-            // Re-calculate total targets after adding skill targets
-            totalTargets = targets.length;
-            destroyedTargets = targets.filter(span => span.dataset.destroyed === 'true').length;
-            updateHealthBar();
         }
 
 
         /**
-         * 2. Pre-process text and wrap every letter in a <span> across ALL non-skill sections.
+         * 2. Pre-process text and wrap every letter in a <span> across ALL sections.
+         * ONLY TARGETS MAIN HEADERS AND FOLDER ITEMS.
          */
         function initializeTargets() {
-            // Target all elements marked as destructible across the whole page *except* the skill list
+            // Keep existing skill targets
+            const existingTargets = targets.filter(span => span.closest('#skill-list'));
+            targets = existingTargets;
+
+            // Target ONLY elements with the 'destructible-text' class that haven't been processed
             document.querySelectorAll(`.destructible-text`).forEach(element => {
-                // If the element is the skill list container or already has children, skip it
-                if (element.id === 'skill-list' || element.children.length > 0) return;
+                // Skip if already processed or is the skill list parent
+                if (element.children.length > 0 && element.children[0].tagName === 'SPAN') return;
+                if (element.id === 'skill-list') return; 
 
                 const textContent = element.textContent.trim();
-                element.innerHTML = ''; 
+                element.innerHTML = ''; // Clear original text
                 
                 textContent.split('').forEach(char => {
                     const span = document.createElement('span');
@@ -620,15 +536,16 @@
                     element.appendChild(span);
                     
                     if (char !== ' ') {
-                        // Apply different color based on section background
-                        const isKhakiSection = element.closest('#skills-matrix') || element.closest('#contact');
+                        // Determine color based on section background
+                        const section = element.closest('section');
+                        const isKhakiSection = section.id === 'about' || section.id === 'projects';
                         span.style.color = isKhakiSection ? 'var(--color-maroon)' : 'var(--color-khaki)';
                         targets.push(span);
                     }
                 });
             });
 
-            // Recalculate total targets based on all spans now present
+            // Recalculate total stats
             totalTargets = targets.length;
             destroyedTargets = targets.filter(span => span.dataset.destroyed === 'true').length; 
             updateHealthBar();
@@ -636,27 +553,20 @@
 
         /**
          * 3. Health Bar and Game State Management
+         * No longer enforces navigation, only tracks the optional goal.
          */
         function updateHealthBar() {
             if (totalTargets === 0) return;
 
             const remainingPercentage = 100 - ((destroyedTargets / totalTargets) * 100);
-            
-            // Clamp value between 0 and 100
             const clampedPercentage = Math.max(0, remainingPercentage);
             
             healthFillElement.style.width = `${clampedPercentage}%`; 
             
-            // Use background property for simplicity over background-color
-            if (clampedPercentage < 25) {
-                healthFillElement.style.background = 'var(--color-danger)'; 
-            } else if (clampedPercentage < 50) {
-                 healthFillElement.style.background = '#ffff00'; // Yellow
-            } else {
-                healthFillElement.style.background = 'var(--color-safe)';
-            }
+            // Simplified color control
+            healthFillElement.style.background = 'linear-gradient(to right, var(--color-danger) 0%, #ffff00 50%, var(--color-safe) 100%)';
 
-            // Check for Game Over condition
+            // Check for optional "Game Over" (All targets destroyed)
             if (destroyedTargets >= totalTargets && !gameOver) {
                 gameOver = true;
                 triggerGlitchEffect();
@@ -676,14 +586,9 @@
             let newY = mouseY + offsetY;
 
             const previewWidth = previewBox.offsetWidth || 416; 
-            if (newX + previewWidth > window.innerWidth) {
-                newX = mouseX - previewWidth - offsetX;
-            }
-
+            if (newX + previewWidth > window.innerWidth) { newX = mouseX - previewWidth - offsetX; }
             const previewHeight = previewBox.offsetHeight || 300; 
-            if (newY + previewHeight > window.innerHeight) {
-                newY = window.innerHeight - previewHeight - 10; 
-            }
+            if (newY + previewHeight > window.innerHeight) { newY = window.innerHeight - previewHeight - 10; }
             
             projectPreview.style.left = `${newX}px`;
             projectPreview.style.top = `${newY}px`;
@@ -707,7 +612,6 @@
         function toggleSkillButtonVisual(skillId, isActive) {
             const skillEl = document.getElementById(skillId);
             if (!skillEl) return;
-            
             if (isActive) {
                 skillEl.classList.add('on');
             } else {
@@ -724,7 +628,6 @@
 
         function repairTargets() {
             if (destroyedTargets === 0) return;
-
             const skillEl = document.getElementById('skill-2');
             skillEl.classList.add('pressed');
             setTimeout(() => {
@@ -735,8 +638,6 @@
             explosionFlash.classList.add('do-explosion');
             
             const repairCount = Math.ceil(totalTargets * (REPAIR_AMOUNT / 100));
-            
-            // Repair newest (visually bottom) targets first
             const destroyedSpans = targets.filter(span => span.dataset.destroyed === 'true').reverse();
             const spansToRepair = destroyedSpans.slice(0, Math.min(repairCount, destroyedSpans.length));
             
@@ -744,6 +645,7 @@
                 span.classList.remove('destroyed');
                 span.dataset.destroyed = 'false';
                 destroyedTargets--; 
+                gameOver = false; // Allow re-triggering the victory glitch
             });
 
             updateHealthBar();
@@ -756,17 +658,15 @@
         }
 
         /**
-         * 4. Shatter Effect
+         * 4. Shatter Effect & Victory Glitch
          */
         function triggerShatter(x, y) {
             const pieceCount = 8;
             for (let i = 0; i < pieceCount; i++) {
                 const piece = document.createElement('div');
                 piece.className = 'shatter-piece';
-                
                 piece.style.left = `${x}px`;
                 piece.style.top = `${y}px`;
-                
                 const angle = Math.random() * 2 * Math.PI;
                 const distance = Math.random() * 30 + 10;
                 
@@ -774,21 +674,15 @@
                     piece.style.opacity = '0';
                     piece.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) rotate(${Math.random() * 360}deg)`;
                 }, 10);
-
                 confettiContainer.appendChild(piece); 
                 setTimeout(() => piece.remove(), 550);
             }
         }
         
-        /**
-         * 5. Victory Glitch Effect 
-         */
         function triggerGlitchEffect() {
             const glitchEl = document.getElementById('victory-glitch');
             if (!glitchEl) return;
-            
             glitchEl.classList.add('rainbow-glitch-active');
-
             setTimeout(() => {
                 glitchEl.classList.remove('rainbow-glitch-active');
             }, 5000); 
@@ -805,21 +699,13 @@
         
         document.addEventListener('keydown', (e) => {
             if (gameOver) return;
-
             switch (e.key) {
-                case '1':
-                    toggleSpreadShot();
-                    break;
-                case '2':
-                    repairTargets();
-                    break;
-                case '3':
-                    toggleGunActive(); 
-                    break;
+                case '1': toggleSpreadShot(); break;
+                case '2': repairTargets(); break;
+                case '3': toggleGunActive(); break;
             }
         });
         
-        // --- HUD Click Listeners (for mobile/touch) ---
         document.getElementById('skill-1').addEventListener('click', toggleSpreadShot);
         document.getElementById('skill-2').addEventListener('click', repairTargets);
         document.getElementById('skill-3').addEventListener('click', toggleGunActive);
@@ -828,10 +714,7 @@
         function createBullet() {
             if (gameOver || !isFiring) return; 
             
-            // Firing angles (in radians: -10 deg, 0 deg, +10 deg)
             const angles = spreadShotActive ? [-0.174, 0, 0.174] : [0]; 
-            
-            // FIXED SHOOTING ALIGNMENT: Start point aligned to the plane's nose (16px up, 4px left for 8px bullet)
             const startX = mouseX - 4; 
             const startY = mouseY - 16; 
 
@@ -847,11 +730,7 @@
                 const vy = -Math.cos(angle) * BULLET_SPEED;
                 
                 const bulletObj = {
-                    el: bullet,
-                    x: startX,
-                    y: startY,
-                    vx: vx,
-                    vy: vy
+                    el: bullet, x: startX, y: startY, vx: vx, vy: vy
                 };
                 
                 bullets.push(bulletObj);
@@ -912,12 +791,10 @@
                         break; 
                     }
                 }
-
                 return !hit; 
             });
         }
 
-        // Initialize targets (all phases now combined) and start the game loop on load
         window.onload = () => {
              // Glitching text content toggle
             let isDev = true;
@@ -928,9 +805,11 @@
                 }, 1200); 
             }
 
-            // Setup new continuous scroll flow
             setupSkillsMatrixSection(); 
             initializeTargets(); 
+            
+            toggleSkillButtonVisual('skill-1', spreadShotActive);
+            toggleSkillButtonVisual('skill-3', isFiring);
             
             requestAnimationFrame(gameLoop);
         };
