@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leroza.dev - Retro Portfolio [CRT v2]</title>
+    <title>Leroza.dev - Retro OS Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Retro Terminal Font -->
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -26,13 +26,15 @@
         body {
             cursor: none; /* Hide default cursor */
             font-family: 'VT323', monospace;
-            background-color: var(--color-black); /* True black background for CRT effect */
-            color: var(--color-khaki); /* Main text color */
+            background-color: var(--color-black); 
+            color: var(--color-khaki); 
             height: 100vh;
-            /* Scroll ability maintained by browser auto-overflow */
+            /* Use smooth scrolling for navigation links */
+            scroll-behavior: smooth; 
             scroll-snap-type: y mandatory;
-            padding-bottom: 70px;
+            padding-bottom: 70px; 
             position: relative;
+            overflow-x: hidden;
         }
 
         section {
@@ -41,50 +43,41 @@
             align-items: center;
             justify-content: center;
             scroll-snap-align: start;
-            padding: 2rem;
-            /* Retro glow/shadow: stronger glow on the text */
+            /* Increased spacing and centered on all devices */
+            padding: 8rem 1rem 6rem 1rem; 
             text-shadow: 0 0 5px var(--color-khaki), 0 0 10px rgba(195, 176, 145, 0.4);
         }
-
+        
         /* ----------------------------------------------------
-        * NEW: CRT SCREEN OVERLAY (Scanlines, Curvature, Bloom)
+        * CRT OVERLAY & GLITCH EFFECTS (Minimal Custom CSS)
         * ---------------------------------------------------- */
         #crt-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 10000;
-            opacity: 0.9;
-            /* Curvature, subtle vignette, and black edges */
-            box-shadow: 
-                inset 0 0 100px rgba(0,0,0,0.7), /* Vignette */
-                0 0 10px rgba(0, 0, 0, 0.8);
-            background: 
-                /* Scanlines */
-                repeating-linear-gradient(
-                    0deg,
-                    rgba(0, 0, 0, 0.2),
-                    rgba(0, 0, 0, 0.3) 1px,
-                    transparent 1px,
-                    transparent 2px
-                );
-            /* Subtle RGB separation/bloom */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 10000; opacity: 0.9;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.7), 0 0 10px rgba(0, 0, 0, 0.8);
+            background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.3) 1px, transparent 1px, transparent 2px);
             filter: blur(0.3px) contrast(1.1);
-            /* Curvature effect */
             transform: perspective(1000px) rotateX(0deg) rotateY(0deg); 
         }
 
+        /* Glitch Keyframes */
+        @keyframes glitchFlicker {
+            0%, 70% { text-shadow: 0 0 5px var(--color-maroon), 0 0 10px rgba(80, 0, 0, 0.4); transform: translate(0, 0); }
+            75% { text-shadow: 2px 0px 5px var(--color-danger), -2px 0px 5px rgb(0, 255, 255); transform: translate(1px, 0.5px); }
+            80% { text-shadow: -1px 1px 5px rgb(255, 0, 255), 1px -1px 5px var(--color-safe); transform: translate(-1.5px, -1px); }
+            85% { text-shadow: 1px -1px 5px var(--color-orange), -1px 1px 5px var(--color-white); transform: translate(0.5px, 0.5px); }
+            90%, 100% { text-shadow: 0 0 5px var(--color-maroon), 0 0 10px rgba(80, 0, 0, 0.4); transform: translate(0, 0); }
+        }
+        .constant-glitch { animation: glitchFlicker 1.2s infinite steps(1); }
+        #glitching-identity { color: var(--color-khaki); z-index: 51; padding: 10px; }
 
         /*
-        * 2. The Pixel Plane Cursor (Now Khaki)
+        * 2. The Pixel Plane Cursor (Chunky Pixel Art)
         */
         #plane-cursor {
             position: fixed;
-            width: 16px; /* Increased size for visibility */
-            height: 16px;
+            width: 32px; 
+            height: 32px;
             pointer-events: none;
             z-index: 10001;
             top: 0;
@@ -97,275 +90,65 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 4px;
-            height: 4px;
-            background-color: var(--color-khaki); /* Plane body matches terminal color */
+            width: 2px; 
+            height: 2px;
+            background-color: var(--color-khaki); 
+            /* Detailed 5x5 pixel plane structure using 4px offsets */
             box-shadow: 
-                /* Wings */
+                /* Main Body Center Column */
+                0 -8px var(--color-khaki), 0 -4px var(--color-khaki), 
+                0 4px var(--color-khaki), 0 8px var(--color-khaki),
+                
+                /* Main Body Left/Right (1 pixel wide) */
+                -4px 0 var(--color-khaki), 4px 0 var(--color-khaki),
                 -8px 0 var(--color-khaki), 8px 0 var(--color-khaki),
-                /* Nose/Firing Port */
-                0 -8px var(--color-khaki), 0 -12px var(--color-white), /* White tip for bullet fire */
-                /* Tail */
-                0 8px var(--color-khaki); 
+                
+                /* Wings (Top spread, 7 wide) */
+                -12px 4px var(--color-khaki), 12px 4px var(--color-khaki),
+                -8px 4px var(--color-khaki), 8px 4px var(--color-khaki),
+                -4px 4px var(--color-khaki), 4px 4px var(--color-khaki),
+                
+                /* Firing Tip (2 pixels higher than center) */
+                0 -12px var(--color-khaki),
+                /* Firing Port Indicator (3 pixels higher) - Brighter for bullet origin */
+                0 -16px var(--color-orange); 
             transform: translate(-50%, -50%);
         }
 
-        /*
-        * 3. Bullet Styling (Orange Dot - Brighter Glow)
-        */
+        /* ----------------------------------------------------
+        * DYNAMIC ELEMENTS
+        * ---------------------------------------------------- */
         .bullet {
-            position: fixed;
-            width: 8px;
-            height: 8px;
+            position: fixed; width: 8px; height: 8px;
             background-color: var(--color-orange); 
-            border-radius: 50%;
+            border-radius: 50%; z-index: 9999;
+            box-shadow: 0 0 10px var(--color-orange), 0 0 30px var(--color-orange); 
             pointer-events: none;
-            z-index: 9999;
-            box-shadow: 0 0 10px var(--color-orange), 0 0 30px var(--color-orange); /* Stronger glow */
-            opacity: 1;
-            transition: opacity 0.1s;
-        }
-
-        /*
-        * 4. Text Spans (Destructible Targets)
-        */
-        .destructible-text span {
-            display: inline-block;
-            transition: opacity 0.3s, transform 0.3s, color 0.1s;
-            line-height: 1.2;
-            will-change: transform, color;
         }
         
-        /* Lively Hover Effect */
-        .destructible-text span:hover {
-            transform: translateY(-2px) scale(1.05);
-            color: var(--color-orange); 
-            z-index: 10;
-        }
-
         .destroyed {
             opacity: 0 !important;
             transform: scale(0.5) translateY(-20px);
-        }
-
-        /*
-        * 4.1. Chaotic Animation for Skills
-        */
-        @keyframes gruggyWobble {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            25% { transform: translate(-1px, 0px) rotate(-0.5deg); }
-            50% { transform: translate(1px, -1px) rotate(0.5deg); }
-            75% { transform: translate(-1px, 1px) rotate(-0.2deg); }
-            100% { transform: translate(1px, 1px) rotate(0deg); }
-        }
-
-        .chaotic-skill {
-            animation: gruggyWobble 1s infinite alternate;
+            transition: opacity 0.3s, transform 0.3s;
         }
         
-        /*
-        * 4.2. Explosion Flash Animation
-        */
-        @keyframes flashExplosion {
-            0% { opacity: 0; background-color: transparent; }
-            5% { opacity: 1; background-color: var(--color-orange); }
-            10% { opacity: 1; background-color: var(--color-white); }
-            20% { opacity: 0; background-color: transparent; }
-            100% { opacity: 0; background-color: transparent; }
+        /* Typography Overrides (Maximized Spacing) */
+        .max-type-title {
+            font-size: 8rem; line-height: 0.9; margin-bottom: 2rem;
+        }
+        @media (min-width: 768px) {
+            .max-type-title { font-size: 14rem; }
         }
 
-        #explosion-flash {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 10002;
-            pointer-events: none;
-            opacity: 0;
+        .max-type-subtitle {
+            font-size: 3rem; line-height: 1.1; margin-top: 3rem; 
         }
-        .do-explosion {
-            animation: flashExplosion 0.5s forwards;
-        }
-
-        /*
-        * 4.3. Card Drop/Bounce Animation and Initial State Fix
-        */
-        @keyframes cardDrop {
-            0% { transform: translateY(-100vh); opacity: 0; }
-            60% { transform: translateY(0); opacity: 1; }
-            80% { transform: translateY(-20px); }
-            100% { transform: translateY(0); }
-        }
-        .do-card-drop {
-            display: block !important; 
-            animation: cardDrop 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
-            animation-delay: 0.5s;
-        }
-
-        .card-initial-state {
-            opacity: 0;
-            transform: translateY(-100vh);
-            display: none;
+        @media (min-width: 768px) {
+             .max-type-subtitle { font-size: 5rem; }
         }
         
-        /* ----------------------------------------------------
-        * 5. Retro Life Bar / HUD Styles (Chunky & Bezel)
-        * ---------------------------------------------------- */
-        .hud-bar {
-            /* Use khaki borders for a chunky bezel look */
-            border-top: 6px solid var(--color-khaki);
-            border-bottom: 6px solid var(--color-khaki);
-            background-color: var(--color-maroon);
-            box-shadow: 0 0 15px rgba(255, 140, 0, 0.5); /* Subtle Orange Glow */
-        }
-        
-        .health-bar-frame {
-            border: 3px solid var(--color-khaki); /* Khaki frame */
-            background-color: var(--color-black); /* Black background */
-            height: 18px;
-            width: 100%;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8);
-        }
-
-        .health-bar-fill {
-            height: 100%;
-            /* Use a gradient to simulate segments and make it look more powerful */
-            background: linear-gradient(to right, var(--color-danger) 0%, #ffff00 50%, var(--color-safe) 100%);
-            transition: width 0.5s;
-            /* Ensure fill starts from the left */
-            transform-origin: left;
-        }
-
-        /* 5.1 SKILLS HUD BUTTON STYLES (Embedded Look) */
-        .skill-button {
-            display: inline-block;
-            border: 3px solid var(--color-khaki); /* Frame border */
-            background-color: var(--color-maroon);
-            color: var(--color-khaki);
-            padding: 2px 6px;
-            /* Outset effect (simulating raised button) */
-            box-shadow: 2px 2px 0 var(--color-black), -2px -2px 0 var(--color-maroon);
-            transition: box-shadow 0.1s ease-in-out, background-color 0.1s;
-        }
-
-        /* Pressed/Repair Look (Key 2) */
-        .skill-button:active, .skill-button.pressed {
-            background-color: var(--color-orange); 
-            color: var(--color-white);
-            /* Inset effect (simulating pressed button) */
-            box-shadow: inset 2px 2px 0 var(--color-black), inset -2px -2px 0 var(--color-white);
-        }
-
-        /* Toggle ON Look (Key 1, Key 3) */
-        .skill-button.on {
-            background-color: var(--color-white);
-            color: var(--color-maroon);
-            box-shadow: 0 0 8px var(--color-orange); /* Glowing effect */
-        }
-
-        /*
-        * 5.2 Folder Item Styling
-        */
-        .folder-item {
-            font-size: 2.5rem; /* Large text for retro feel */
-            padding: 8px;
-            color: var(--color-maroon); /* Text color in khaki section */
-            transition: color 0.1s, background-color 0.1s;
-            cursor: pointer;
-            width: 100%; /* Ensure it fills the container */
-            display: block;
-            border-bottom: 2px dashed rgba(80, 0, 0, 0.3);
-        }
-
-        .folder-item:hover {
-            color: var(--color-white); /* Highlight text on hover */
-            background-color: rgba(80, 0, 0, 0.6); /* Maroon background highlight */
-            text-shadow: 0 0 5px var(--color-white);
-        }
-        
-        /* ----------------------------------------------------
-        * 6. Preview and Glitch Effects
-        * ---------------------------------------------------- */
-
-        /* Project Preview Hologram Box */
-        #project-preview {
-            position: fixed;
-            top: 0;
-            left: 0;
-            /* Ensure the preview stays above the HUD, but below the cursor */
-            z-index: 9990; 
-            pointer-events: none; /* Crucial: allows clicking through the overlay */
-            transition: opacity 0.2s ease-out;
-        }
-        #preview-box {
-            box-shadow: 0 0 15px rgba(255, 140, 0, 0.8); /* Orange glow for hologram effect */
-            width: 400px; /* Fixed width for consistency */
-        }
-
-        .shatter-piece {
-            position: fixed;
-            width: 2px;
-            height: 2px;
-            background-color: var(--color-khaki); 
-            pointer-events: none;
-            z-index: 10001; 
-            opacity: 1;
-            transition: transform 0.5s linear, opacity 0.5s ease-out;
-        }
-
-        /* 6.1 Victory Glitch Effect */
-        @keyframes rainbowFlicker {
-            0% { box-shadow: 0 0 20px 5px rgba(255, 0, 0, 0.9); }
-            10% { box-shadow: 0 0 25px 8px rgba(255, 165, 0, 0.9); }
-            20% { box-shadow: 0 0 30px 10px rgba(255, 255, 0, 0.9); }
-            30% { box-shadow: 0 0 20px 5px rgba(0, 255, 0, 0.9); }
-            40% { box-shadow: 0 0 25px 8px rgba(0, 0, 255, 0.9); }
-            50% { box-shadow: 0 0 30px 10px rgba(75, 0, 130, 0.9); }
-            60% { box-shadow: 0 0 20px 5px rgba(148, 0, 211, 0.9); }
-            70% { box-shadow: 0 0 25px 8px rgba(255, 0, 0, 0.9); }
-            80% { box-shadow: 0 0 30px 10px rgba(255, 255, 255, 0.9); }
-            90% { box-shadow: 0 0 20px 5px rgba(255, 140, 0, 0.9); }
-            100% { box-shadow: 0 0 20px 5px rgba(255, 0, 0, 0.9); }
-        }
-        
-        #victory-glitch {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 10003; /* Higher than cursor and explosion */
-            box-shadow: inset 0 0 0 0 transparent; /* Initial state (inset for edge effect) */
-            /* Add an inset glow for the edge effect */
-            filter: drop-shadow(0 0 50px rgba(255, 255, 255, 0.5));
-            transition: box-shadow 0.1s linear;
-        }
-
-        .rainbow-glitch-active {
-            /* We use a large inset box-shadow to simulate an edge glow that glitches */
-            box-shadow: 
-                inset 0 0 0 500px transparent, /* Main transparent fill */
-                inset 0 0 50px 10px; /* Base glow */
-            animation: rainbowFlicker 0.2s infinite steps(1); /* Fast flicker */
-        }
-
-
-        /* Phase 2 Skill Card Styling - Chunky Border Look */
-        #skill-card-container {
-            box-shadow: 0 0 20px rgba(195,176,145,0.8), 0 0 5px rgba(255,255,255,0.8);
-            max-width: 90%;
-            /* Use the same chunky border style as the HUD */
-            border: 6px solid var(--color-khaki);
-            background-color: var(--color-maroon);
-            position: relative;
-            overflow: hidden; 
-        }
-        .skill-name {
-            color: var(--color-white);
-            margin-right: 1.5rem; 
-            display: inline-block;
+        .max-type-skill-label {
+            font-size: 2.5rem; line-height: 1.1;
         }
     </style>
 </head>
@@ -379,48 +162,39 @@
         <div class="plane-body"></div>
     </div>
 
-    <!-- Bullet Container -->
+    <!-- Bullet Container & Effects -->
     <div id="bullet-container"></div>
-
-    <!-- Confetti Container (Kept for shatter effect pieces) -->
     <div id="confetti-container"></div>
-    
-    <!-- Explosion Flash Overlay -->
     <div id="explosion-flash"></div>
-
-    <!-- Victory Glitch Overlay -->
     <div id="victory-glitch"></div>
-
-    <!-- NEW: Project Preview Overlay (Fixed to screen) -->
     <div id="project-preview" class="fixed top-0 left-0 hidden z-20 pointer-events-none opacity-0">
         <div id="preview-box" class="p-2 border-4 border-[var(--color-orange)] bg-[var(--color-black)] text-[var(--color-khaki)] shadow-lg" style="width: 400px;">
-            <p class="text-xl mb-2 text-center border-b border-[var(--color-khaki)]">FILE_PREVIEW.IMG</p>
-            <!-- Placeholder image will be set by JS -->
+            <p class="text-xl mb-2 text-center border-b border-[var(--color-khaki)]">FILE\_PREVIEW.IMG</p>
             <img id="preview-image" src="" alt="Project Preview Placeholder" class="w-full h-auto" onerror="this.onerror=null;this.src='https://placehold.co/400x250/ff0000/ffffff?text=ERROR'; document.getElementById('preview-box').style.width='400px'">
         </div>
     </div>
 
-    <!-- Header / LIFEBAR HUD (Fixed to the BOTTOM) -->
+    <!-- Top-Left Glitching Identity (OS Title) -->
+    <div id="glitching-identity" class="fixed top-0 left-0 text-xl md:text-3xl font-extrabold tracking-widest hidden sm:block constant-glitch">
+        LEROZA.<span id="glitch-title" class="text-[var(--color-orange)]">DEV</span>
+    </div>
+
+    <!-- HUD / TASKBAR (Fixed to the BOTTOM) -->
     <header id="hud-bar" class="fixed bottom-0 left-0 right-0 z-50 p-3 hud-bar">
         <nav class="flex justify-between items-center max-w-7xl mx-auto w-full text-lg">
             
-            <!-- Group 1 (Left: Player Name) -->
-            <div class="text-xl md:text-2xl font-bold text-[var(--color-khaki)] tracking-widest border-b-4 border-b-[var(--color-orange)] pb-1 hidden sm:block">
-                PLAYER: LEROZA
-            </div>
-
-            <!-- Group 2 (Center: HP & Skills) -->
+            <!-- Group 1 (Left: HP & Targets) -->
             <div class="flex items-center space-x-4 md:space-x-6 mx-auto md:mx-0">
                 
                 <!-- Health Bar Visual -->
                 <div class="flex items-center space-x-2">
-                    <span class="text-xl text-[var(--color-khaki)]">TARGETS:</span>
+                    <span class="text-xl text-[var(--color-maroon)]">TARGETS:</span>
                     <div class="health-bar-frame w-20 md:w-28">
                         <div id="health-fill" class="health-bar-fill" style="width: 100%;"></div>
                     </div>
                 </div>
 
-                <!-- Skills HUD -->
+                <!-- Skills/Toggles HUD -->
                 <div id="skills-hud" class="hidden sm:flex space-x-2 text-sm font-bold">
                     <span id="skill-1" class="skill-button cursor-pointer on">[1] SPREAD: OFF</span>
                     <span id="skill-2" class="skill-button cursor-pointer">[2] REPAIR (5%)</span>
@@ -428,74 +202,104 @@
                 </div>
             </div>
 
-            <!-- Group 3 (Right: Navigation Links) -->
+            <!-- Group 2 (Right: Navigation Links) -->
             <div class="flex space-x-4 md:space-x-6 text-base font-bold">
-                <a href="#intro" class="text-[var(--color-khaki)] hover:text-[var(--color-orange)] transition duration-200">[ HOME ]</a>
-                <a href="#work" class="text-[var(--color-khaki)] hover:text-[var(--color-orange)] transition duration-200">[ PROJECTS ]</a>
-                <a href="#contact" class="text-[var(--color-khaki)] hover:text-[var(--color-orange)] transition duration-200">[ CONNECT ]</a>
+                <a href="#intro" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ HOME ]</a>
+                <a href="#about" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ ABOUT ]</a>
+                <a href="#skills" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ SKILLS ]</a>
+                <a href="#projects" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ PROJECTS ]</a>
+                <a href="#contact" class="text-[var(--color-maroon)] hover:text-[var(--color-orange)] transition duration-200">[ CONNECT ]</a>
             </div>
         </nav>
     </header>
 
-    <!-- SECTION 1: INTRO (Maroon Background) - PHASE 1 & PHASE 2 Containers -->
+    <!-- SECTION 1: HOME (Maroon Background) -->
     <section id="intro" class="bg-[var(--color-maroon)]">
-        <div class="text-center max-w-4xl px-4">
+        <div class="text-center max-w-7xl px-4">
             
-            <!-- PHASE 1: Initial Screen -->
-            <div id="mission-start-screen" class="space-y-8">
-                <h2 class="text-7xl md:text-8xl font-extrabold text-[var(--color-khaki)] destructible-text" data-phase="1">
-                    MISSION FILE.
-                </h2>
-                <p class="text-3xl md:text-5xl font-light text-[var(--color-white)] destructible-text" data-phase="1">
-                    SCAN TO CONTINUE.
-                </p>
-            </div>
-            
-            <!-- PHASE 2: SKILLS CARD -->
-            <div id="skill-card-container" class="card-initial-state text-left w-full md:w-[800px] p-6 bg-[var(--color-maroon)] relative">
-                <h3 class="4xl font-extrabold text-[var(--color-khaki)] mb-6 border-b-4 border-b-[var(--color-khaki)] pb-2">SKILL_MATRIX // RATING</h3>
-                
-                <div id="skill-list" class="grid grid-cols-2 gap-x-12 gap-y-4">
-                    <!-- Skills will be populated here by JS upon Phase 1 completion -->
-                </div>
+            <h2 class="max-type-title font-extrabold text-[var(--color-khaki)] destructible-text" data-section="intro">
+                OS // LEROZA.DEV 
+            </h2>
+            <p class="max-type-subtitle font-light text-[var(--color-white)] destructible-text" data-section="intro">
+                SYSTEM INITIATED. TARGETS ONLINE.
+            </p>
+            <p class="max-type-subtitle font-light text-[var(--color-white)] mt-8 text-2xl md:text-4xl destructible-text" data-section="intro">
+                DESTROY ALL TARGETS TO UNLOCK FINAL SCORE.
+            </p>
+        </div>
+    </section>
 
-                <p class="xl md:text-2xl font-extralight text-[var(--color-khaki)] mt-8">
-                    TARGET PERCENTAGES.
+    <!-- SECTION 2: ABOUT (Khaki Background) -->
+    <section id="about" class="bg-[var(--color-khaki)]">
+        <div class="text-center max-w-5xl px-4 text-[var(--color-maroon)] flex flex-col items-center justify-center space-y-8 md:space-y-12">
+             <h2 class="max-type-title font-extrabold destructible-text" data-section="about">
+                USER_FILE
+            </h2>
+            <div class="text-left space-y-6 max-w-3xl text-2xl md:text-3xl">
+                <p class="destructible-text" data-section="about">
+                    // I am a Frontend Combat Specialist dedicated to creating elegant, high-performance web experiences. My expertise lies in translating complex designs into robust, pixel-perfect UIs, with a specialty in modern JavaScript frameworks.
+                </p>
+                <p class="destructible-text" data-section="about">
+                    // Deployment Status: Active. Mission Objective: Deliver functional, responsive, and visually stunning applications that push the boundaries of user interaction.
                 </p>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 2: WORK (Khaki Background) - Updated to Folder Format -->
-    <section id="work" class="bg-[var(--color-khaki)]">
-        <div class="text-center max-w-5xl px-4 text-[var(--color-maroon)]">
-            <h2 class="7xl md:text-9xl font-extrabold mb-4 destructible-text" data-phase="2">
+    <!-- SECTION 3: SKILLS (Maroon Background) - Dedicated Matrix -->
+    <section id="skills" class="bg-[var(--color-maroon)]">
+        <div class="text-center max-w-7xl px-4 text-[var(--color-khaki)]">
+            <h2 class="max-type-title font-extrabold mb-12 destructible-text" data-section="skills">
+                SKILL_MATRIX
+            </h2>
+            
+            <div class="skill-matrix-section text-left w-full md:w-[900px] p-8 md:p-12 relative mx-auto">
+                
+                <h3 class="max-type-subtitle font-extrabold text-[var(--color-khaki)] mb-8 border-b-4 border-b-[var(--color-khaki)] pb-2 text-[var(--color-khaki)]">
+                    PROGRAMMING // CAPACITIES
+                </h3>
+                
+                <div id="skill-list" class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10"> 
+                    <!-- Skills populated by JS -->
+                </div>
+
+                <p class="max-type-subtitle font-extralight text-[var(--color-khaki)] mt-12 text-[var(--color-khaki)]">
+                    // PERCENTAGES ARE TARGETS. DESTROY ALL TO PROVE MASTERY.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: PROJECTS (Khaki Background) -->
+    <section id="projects" class="bg-[var(--color-khaki)]">
+        <div class="text-center max-w-7xl px-4 text-[var(--color-maroon)]">
+            <h2 class="max-type-title font-extrabold mb-12 destructible-text" data-section="projects">
                 PROJECT_LOG
             </h2>
             <!-- New Folder List Structure -->
-            <div id="project-folder-list" class="mt-12 text-left max-w-2xl mx-auto space-y-1 md:space-y-2">
+            <div id="project-folder-list" class="mt-16 text-left max-w-3xl mx-auto space-y-4">
                 
-                <div class="folder-item destructible-text" data-phase="2" 
-                     onmouseover="showPreview(event, 'https://placehold.co/400x250/500000/C3B091?text=GAME+UI+SCREENSHOT')"
-                     onmouseout="hidePreview()">
+                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="projects" 
+                    onmouseover="showPreview(event, 'https://placehold.co/400x250/500000/C3B091?text=GAME+UI+SCREENSHOT')"
+                    onmouseout="hidePreview()">
                     > [DIR] GAME\_UI\_V1 (2024)
                 </div>
                 
-                <div class="folder-item destructible-text" data-phase="2" 
-                     onmouseover="showPreview(event, 'https://placehold.co/400x250/C3B091/500000?text=WEB+APP+DASHBOARD')"
-                     onmouseout="hidePreview()">
+                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="projects" 
+                    onmouseover="showPreview(event, 'https://placehold.co/400x250/C3B091/500000?text=WEB+APP+DASHBOARD')"
+                    onmouseout="hidePreview()">
                     > [DIR] WEB\_APP\_V2 (2023)
                 </div>
                 
-                <div class="folder-item destructible-text" data-phase="2" 
-                     onmouseover="showPreview(event, 'https://placehold.co/400x250/ff8c00/FFFFFF?text=3D+MODEL+RENDER')"
-                     onmouseout="hidePreview()">
+                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="projects" 
+                    onmouseover="showPreview(event, 'https://placehold.co/400x250/ff8c00/FFFFFF?text=3D+MODEL+RENDER')"
+                    onmouseout="hidePreview()">
                     > [DIR] 3D\_ASSETS\_PACK (2022)
                 </div>
                 
-                <div class="folder-item destructible-text" data-phase="2" 
-                     onmouseover="showPreview(event, 'https://placehold.co/400x250/00ff00/500000?text=AI+BOT+INTEGRATION')"
-                     onmouseout="hidePreview()">
+                <div class="folder-item destructible-text max-type-skill-label bg-[var(--color-khaki)] text-[var(--color-maroon)]" data-section="projects" 
+                    onmouseover="showPreview(event, 'https://placehold.co/400x250/00ff00/500000?text=AI+BOT+INTEGRATION')"
+                    onmouseout="hidePreview()">
                     > [FILE] AI\_ENGINE\_V1.EXE
                 </div>
                 
@@ -503,18 +307,18 @@
         </div>
     </section>
 
-    <!-- SECTION 3: CONTACT (Maroon Background) -->
+    <!-- SECTION 5: CONTACT (Maroon Background) -->
     <section id="contact" class="bg-[var(--color-maroon)]">
-        <div class="text-center max-w-4xl px-4">
-            <h2 class="7xl md:text-9xl font-extrabold mb-4 text-[var(--color-khaki)] destructible-text" data-phase="2">
-                GAME OVER.
+        <div class="text-center max-w-7xl px-4 text-[var(--color-khaki)]">
+            <h2 class="max-type-title font-extrabold mb-12 destructible-text" data-section="contact">
+                SYSTEM_SHUTDOWN
             </h2>
-            <p class="3xl md:text-5xl font-light text-[var(--color-white)] mt-8 destructible-text" data-phase="2">
-                LEROZA@DEV.IO
+            <p class="max-type-subtitle font-light text-[var(--color-white)] mt-8 destructible-text" data-section="contact">
+                LEROZA@DEV.IO // TERMINATION POINT
             </p>
-            <div class="mt-12">
+            <div class="mt-16">
                 <!-- Contact Button: Hard lines, orange hover, inverse colors -->
-                <a href="mailto:leroza@dev.io" class="inline-block px-8 py-4 text-2xl font-bold bg-[var(--color-khaki)] text-[var(--color-maroon)] rounded-none shadow-2xl border-4 border-white hover:bg-[var(--color-orange)] hover:text-white transition duration-300 transform hover:scale-105">
+                <a href="mailto:leroza@dev.io" class="inline-block px-10 py-6 text-3xl font-bold bg-[var(--color-khaki)] text-[var(--color-maroon)] rounded-none shadow-2xl border-4 border-white hover:bg-[var(--color-orange)] hover:text-white transition duration-300 transform hover:scale-105">
                     INITIATE_CONTACT
                 </a>
             </div>
@@ -527,27 +331,30 @@
         const bulletContainer = document.getElementById('bullet-container');
         const healthFillElement = document.getElementById('health-fill');
         const confettiContainer = document.getElementById('confetti-container');
-        const missionStartScreen = document.getElementById('mission-start-screen');
-        const skillCardContainer = document.getElementById('skill-card-container');
         const skillListElement = document.getElementById('skill-list');
         const explosionFlash = document.getElementById('explosion-flash');
+        const glitchTitleEl = document.getElementById('glitch-title');
         
-        // NEW Preview elements
+        // Preview elements
         const projectPreview = document.getElementById('project-preview');
         const previewImage = document.getElementById('preview-image');
         const previewBox = document.getElementById('preview-box');
 
-        const BULLET_SPEED = 10; 
-        const FIRE_RATE = 50; 
-        const REPAIR_AMOUNT = 5; // Percentage of destroyed targets to repair with Key 2
+        // Core Game Constants
+        const BULLET_SPEED = 20; 
+        const FIRE_RATE = 100; 
+        const REPAIR_AMOUNT = 5; 
 
+        // Consolidated Skill Data (Updated list for richer content)
         const SKILL_DATA = [
-            { name: "HTML", percent: 40 },
-            { name: "CSS", percent: 30 },
-            { name: "JS", percent: 50 },
-            { name: "BOOTSTRAP", percent: 60 },
-            { name: "TAILWIND", percent: 30 },
-            { name: "PHP", percent: 70 },
+            { name: "HTML/CSS/TAILWIND", percent: 95, color: '#ff8c00' }, 
+            { name: "JAVASCRIPT (ES6+)", percent: 95, color: '#00ff00' },
+            { name: "REACT/NEXT.JS", percent: 90, color: '#00ff00' },
+            { name: "TYPESCRIPT", percent: 85, color: '#00ff00' },
+            { name: "NODE/EXPRESS", percent: 80, color: '#ffff00' },
+            { name: "FIREBASE/MONGO", percent: 75, color: '#ff0000' },
+            { name: "UX/UI DESIGN", percent: 90, color: '#ff8c00' }, 
+            { name: "VERSION CONTROL (GIT)", percent: 95, color: '#00ff00' },
         ];
 
         // --- State Variables ---
@@ -555,30 +362,76 @@
         let mouseY = 0;
         let lastBulletTime = 0;
         let bullets = [];
-        
         let targets = []; 
         let totalTargets = 0;
         let destroyedTargets = 0;
-        let gamePhase = 1; 
         let gameOver = false;
-
-        // NEW: Timeout variable for debouncing the hide action
         let hideTimeout;
-
-        // --- Skill States ---
         let spreadShotActive = false;
         let isFiring = true; 
         
         /**
-         * 1. Pre-process text and wrap every letter in a <span> for the current phase.
+         * 1. Populates the dedicated skill matrix section with destructible targets.
+         */
+        function setupSkillsMatrixSection() {
+            // Clear existing targets only for the skill list area
+            targets = targets.filter(span => !span.closest('#skill-list')); 
+            skillListElement.innerHTML = ''; 
+
+            SKILL_DATA.forEach(skill => {
+                const skillLine = document.createElement('div');
+                skillLine.className = `max-type-skill-label font-light chaotic-skill destructible-text flex flex-col md:flex-row items-start md:items-center justify-between space-y-2 md:space-y-0`;
+                skillLine.style.animationDelay = `-${Math.random()}s`;
+
+                // Name (Maroon text on Khaki section's maroon background container)
+                const nameContainer = document.createElement('span');
+                nameContainer.className = 'skill-name text-white mr-4'; // Use white for high contrast inside the maroon skill box
+                nameContainer.textContent = `${skill.name}`;
+                skillLine.appendChild(nameContainer);
+
+                // Destructible part (Percentage)
+                const percentContainer = document.createElement('span');
+                percentContainer.className = 'flex';
+
+                const destructibleText = `${skill.percent}%`;
+                destructibleText.split('').forEach(char => {
+                    const span = document.createElement('span');
+                    span.textContent = char === ' ' ? '\u00A0' : char; 
+                    span.dataset.destroyed = 'false';
+                    span.style.color = skill.color; // Color-coded by strength
+                    
+                    percentContainer.appendChild(span);
+                    
+                    if (char !== ' ') {
+                        targets.push(span); // Add new targets
+                    }
+                });
+
+                skillLine.appendChild(percentContainer);
+                skillListElement.appendChild(skillLine);
+            });
+        }
+
+
+        /**
+         * 2. Pre-process text and wrap every letter in a <span> across ALL sections.
          */
         function initializeTargets() {
-            targets.length = 0; // Clear targets for the new phase
+            // Ensures only non-skill targets are initialized if needed, and recalculates totals
             
-            // Phase 1 targets only target the initial large text
-            const elementsToTarget = document.querySelectorAll(`.destructible-text[data-phase="1"]`);
-            
-            elementsToTarget.forEach(element => {
+            // Collect existing skill targets to keep them intact
+            const existingTargets = targets.filter(span => span.closest('#skill-list'));
+            targets = existingTargets;
+
+            // Target all elements marked as destructible across the whole page *except* the skill list parent
+            document.querySelectorAll(`.destructible-text`).forEach(element => {
+                // If element already has children (meaning it's initialized or the skill list entry), skip
+                if (element.children.length > 0 && element.children[0].tagName === 'SPAN') return;
+                
+                // If it's the skill list container itself, skip
+                if (element.id === 'skill-list') return;
+
+
                 const textContent = element.textContent.trim();
                 element.innerHTML = ''; 
                 
@@ -587,217 +440,72 @@
                     span.textContent = char === ' ' ? '\u00A0' : char; 
                     span.dataset.destroyed = 'false';
                     element.appendChild(span);
+                    
                     if (char !== ' ') {
+                        // Determine color based on section background
+                        const section = element.closest('section');
+                        const isKhakiSection = section.id === 'about' || section.id === 'projects';
+                        span.style.color = isKhakiSection ? 'var(--color-maroon)' : 'var(--color-khaki)';
                         targets.push(span);
                     }
                 });
             });
 
-            // Set initial stats
+            // Recalculate total stats
             totalTargets = targets.length;
-            destroyedTargets = 0;
-            updateHealthBar();
-            // Ensure HUD button states are set correctly on init
-            toggleSkillButtonVisual('skill-1', spreadShotActive);
-            toggleSkillButtonVisual('skill-3', isFiring);
-        }
-
-        /**
-         * 2. Populate the skill card and set up Phase 2 targets (The skills percentages).
-         */
-        function setupSkillsCard() {
-            // Clear existing targets (from phase 1 initial screen)
-            targets.length = 0;
-            skillListElement.innerHTML = ''; 
-
-            // Populate and wrap the skill list with destructible percentages
-            SKILL_DATA.forEach(skill => {
-                const skillLine = document.createElement('p');
-                // Apply chaotic-skill and destructible-text classes
-                skillLine.className = `text-4xl font-light chaotic-skill destructible-text`;
-                skillLine.style.animationDelay = `-${Math.random()}s`;
-
-                // Non-destructible name and separator (white)
-                const name = document.createElement('span');
-                name.className = 'skill-name';
-                name.textContent = `${skill.name} // `;
-                skillLine.appendChild(name);
-
-                // Destructible part (Percentage - khaki, to be destroyed)
-                const destructibleText = `${skill.percent}%`;
-                destructibleText.split('').forEach(char => {
-                    const span = document.createElement('span');
-                    span.textContent = char === ' ' ? '\u00A0' : char; 
-                    span.dataset.destroyed = 'false';
-                    span.style.color = 'var(--color-khaki)'; /* Make percentage khaki */
-                    skillLine.appendChild(span);
-                    
-                    if (char !== ' ') {
-                        targets.push(span); // Add new targets
-                    }
-                });
-                skillListElement.appendChild(skillLine);
-            });
-            
-            // Set phase 2 state
-            totalTargets = targets.length;
-            destroyedTargets = 0;
+            destroyedTargets = targets.filter(span => span.dataset.destroyed === 'true').length; 
             updateHealthBar();
         }
 
         /**
-         * 3. Handles the transition from Phase 1 to Phase 2, including the explosion and card drop.
-         */
-        function transitionToSkills() {
-            // 1. Trigger Explosion
-            explosionFlash.classList.add('do-explosion');
-            
-            // 2. Hide Phase 1 screen immediately
-            missionStartScreen.classList.add('hidden');
-            
-            // 3. Setup skills content while hidden
-            setupSkillsCard();
-
-            // 4. Reveal card and trigger drop animation
-            skillCardContainer.classList.remove('card-initial-state'); 
-            skillCardContainer.classList.add('do-card-drop');
-            
-            // 5. Cleanup explosion class after animation completes
-            setTimeout(() => {
-                explosionFlash.classList.remove('do-explosion');
-            }, 500);
-
-            // 6. Change game phase after card drop finishes
-            setTimeout(() => {
-                gamePhase = 2;
-                // Re-initialize all other phase 2 targets (work/contact text)
-                initializePortfolioTargets(); 
-            }, 1200); 
-        }
-
-        /**
-         * 4. Initializes targets for the rest of the portfolio (Sections 2 and 3).
-         */
-        function initializePortfolioTargets() {
-            // Add all Phase 2 targets to the existing 'targets' array (which already contains the skill percentages)
-            // Select all elements with the specific data-phase, including the new .folder-item elements
-            document.querySelectorAll(`.destructible-text[data-phase="2"]`).forEach(element => {
-                // Only process elements that haven't been processed yet (those without spans)
-                if (element.children.length > 0 && element.children[0].tagName === 'SPAN') {
-                    // Already processed (from skill card)
-                    return; 
-                }
-                
-                const textContent = element.textContent.trim();
-                element.innerHTML = '';
-                
-                textContent.split('').forEach(char => {
-                    const span = document.createElement('span');
-                    span.textContent = char === ' ' ? '\u00A0' : char; 
-                    span.dataset.destroyed = 'false';
-                    // Apply different color based on section (khaki text on maroon, maroon text on khaki)
-                    const isKhakiSection = element.closest('#work');
-                    span.style.color = isKhakiSection ? 'var(--color-maroon)' : 'var(--color-khaki)';
-                    
-                    element.appendChild(span);
-                    if (char !== ' ') {
-                        targets.push(span);
-                    }
-                });
-            });
-
-            // Update stats for the final phase
-            totalTargets = targets.length;
-            // destroyedTargets remains the same (targets destroyed in Phase 1)
-        }
-        
-        /**
-         * 5. Health Bar and Game State Management
+         * 3. Health Bar and Game State Management
          */
         function updateHealthBar() {
             if (totalTargets === 0) return;
 
             const remainingPercentage = 100 - ((destroyedTargets / totalTargets) * 100);
-            
-            // Clamp value between 0 and 100
             const clampedPercentage = Math.max(0, remainingPercentage);
             
             healthFillElement.style.width = `${clampedPercentage}%`; 
             
-            // Danger color thresholds
-            if (clampedPercentage < 25) {
-                healthFillElement.style.backgroundColor = 'var(--color-danger)'; 
-            } else if (clampedPercentage < 50) {
-                 healthFillElement.style.backgroundColor = '#ffff00'; // Yellow
-            } else {
-                healthFillElement.style.backgroundColor = 'var(--color-safe)';
-            }
+            // Simplified color control
+            healthFillElement.style.background = 'linear-gradient(to right, var(--color-danger) 0%, #ffff00 50%, var(--color-safe) 100%)';
 
-            // Check for Phase Transition / Game Over condition
-            if (destroyedTargets >= totalTargets) {
-                if (gamePhase === 1) {
-                    transitionToSkills(); 
-                } else if (gamePhase === 2 && !gameOver) {
-                    gameOver = true;
-                    // Replaced triggerConfetti() with the new glitch effect
-                    triggerGlitchEffect();
-                }
+            // Check for Game Over condition
+            if (destroyedTargets >= totalTargets && !gameOver) {
+                gameOver = true;
+                triggerGlitchEffect();
             }
         }
 
-        // --- PROJECT PREVIEW FUNCTIONS (New) ---
-
-        /**
-         * Shows the project preview image near the cursor position.
-         * @param {Event} event - The mouse event.
-         * @param {string} imageUrl - The placeholder image URL.
-         */
+        // --- PROJECT PREVIEW FUNCTIONS (Hover Hologram) ---
         function showPreview(event, imageUrl) {
             if (gameOver) return;
-
-            // CRUCIAL: Clear any pending hide timeouts
             clearTimeout(hideTimeout);
-
-            // 1. Set Image Source
             previewImage.src = imageUrl;
             
-            // 2. Calculate offset (Image appears to the right of the cursor/plane)
-            const offsetX = 30; // Distance to the right of the cursor
-            const offsetY = 30; // Distance slightly below the cursor
+            const offsetX = 40; 
+            const offsetY = 40; 
             
             let newX = mouseX + offsetX;
             let newY = mouseY + offsetY;
 
-            // Boundary Check (Prevent image from going off the right side)
-            const previewWidth = previewBox.offsetWidth || 416; // Use actual width or default (400px + 2*8px padding)
-            if (newX + previewWidth > window.innerWidth) {
-                // Move to the left of the cursor instead
-                newX = mouseX - previewWidth - offsetX;
-            }
-
-            // Boundary Check (Prevent image from going off the bottom)
-            const previewHeight = previewBox.offsetHeight || 300; // Estimate height
-            if (newY + previewHeight > window.innerHeight) {
-                newY = window.innerHeight - previewHeight - 5; 
-            }
+            const previewWidth = previewBox.offsetWidth || 416; 
+            if (newX + previewWidth > window.innerWidth) { newX = mouseX - previewWidth - offsetX; }
+            const previewHeight = previewBox.offsetHeight || 300; 
+            if (newY + previewHeight > window.innerHeight) { newY = window.innerHeight - previewHeight - 10; }
             
-            // 3. Apply position and show
             projectPreview.style.left = `${newX}px`;
             projectPreview.style.top = `${newY}px`;
             
             projectPreview.classList.remove('hidden');
-            setTimeout(() => { projectPreview.style.opacity = '1'; }, 10); // Fade in (0.2s transition set in CSS)
+            setTimeout(() => { projectPreview.style.opacity = '1'; }, 10); 
         }
 
-        /**
-         * Hides the project preview image with a short delay to prevent flickering.
-         */
         function hidePreview() {
-            // Set a short delay (50ms) before hiding to debounce jittery mouse movements.
             clearTimeout(hideTimeout);
             hideTimeout = setTimeout(() => {
                 projectPreview.style.opacity = '0';
-                // Use a short delay before adding the 'hidden' class to allow CSS transition (0.2s)
                 setTimeout(() => {
                     projectPreview.classList.add('hidden');
                 }, 200); 
@@ -809,7 +517,6 @@
         function toggleSkillButtonVisual(skillId, isActive) {
             const skillEl = document.getElementById(skillId);
             if (!skillEl) return;
-            
             if (isActive) {
                 skillEl.classList.add('on');
             } else {
@@ -826,18 +533,17 @@
 
         function repairTargets() {
             if (destroyedTargets === 0) return;
-
-            // Visual feedback for Key 2
             const skillEl = document.getElementById('skill-2');
             skillEl.classList.add('pressed');
             setTimeout(() => {
                 skillEl.classList.remove('pressed');
-            }, 150);
+                explosionFlash.classList.remove('do-explosion'); 
+            }, 500);
 
-            // Calculate the number of letters to repair (5% of total targets)
-            const repairCount = Math.ceil(totalTargets * (REPAIR_AMOUNT / 100));
+            explosionFlash.classList.add('do-explosion');
             
-            const destroyedSpans = targets.filter(span => span.dataset.destroyed === 'true');
+            const repairCount = Math.ceil(totalTargets * (REPAIR_AMOUNT / 100));
+            const destroyedSpans = targets.filter(span => span.dataset.destroyed === 'true').reverse();
             const spansToRepair = destroyedSpans.slice(0, Math.min(repairCount, destroyedSpans.length));
             
             spansToRepair.forEach(span => {
@@ -852,22 +558,19 @@
         function toggleGunActive() {
             isFiring = !isFiring;
             document.getElementById('skill-3').textContent = `[3] GUN: ${isFiring ? 'ACTIVE' : 'OFF'}`;
-            // Button is ON (lit) when gun is ACTIVE (can shoot)
             toggleSkillButtonVisual('skill-3', isFiring); 
         }
 
         /**
-         * 6. Shatter Effect (Pure JS - generates small debris upon destruction)
+         * 4. Shatter Effect & Victory Glitch
          */
         function triggerShatter(x, y) {
             const pieceCount = 8;
             for (let i = 0; i < pieceCount; i++) {
                 const piece = document.createElement('div');
                 piece.className = 'shatter-piece';
-                
                 piece.style.left = `${x}px`;
                 piece.style.top = `${y}px`;
-                
                 const angle = Math.random() * 2 * Math.PI;
                 const distance = Math.random() * 30 + 10;
                 
@@ -875,56 +578,38 @@
                     piece.style.opacity = '0';
                     piece.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) rotate(${Math.random() * 360}deg)`;
                 }, 10);
-
                 confettiContainer.appendChild(piece); 
                 setTimeout(() => piece.remove(), 550);
             }
         }
         
-        /**
-         * 7. Glitch Effect (Replaces confetti)
-         */
         function triggerGlitchEffect() {
             const glitchEl = document.getElementById('victory-glitch');
             if (!glitchEl) return;
-            
-            // Start the infinite flicker animation
             glitchEl.classList.add('rainbow-glitch-active');
-
-            // Stop the flicker after 5 seconds
             setTimeout(() => {
                 glitchEl.classList.remove('rainbow-glitch-active');
             }, 5000); 
         }
 
         /**
-         * 8. Cursor Tracking & Bullet Creation/Game Loop
+         * 6. Cursor Tracking & Bullet Creation/Game Loop
          */
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            // Plane cursor tracks smoothly
             planeCursor.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
         });
         
-        // --- Global Key Listener for Skills ---
         document.addEventListener('keydown', (e) => {
             if (gameOver) return;
-
             switch (e.key) {
-                case '1':
-                    toggleSpreadShot();
-                    break;
-                case '2':
-                    repairTargets();
-                    break;
-                case '3':
-                    toggleGunActive(); 
-                    break;
+                case '1': toggleSpreadShot(); break;
+                case '2': repairTargets(); break;
+                case '3': toggleGunActive(); break;
             }
         });
         
-        // --- HUD Click Listeners (for mobile/touch) ---
         document.getElementById('skill-1').addEventListener('click', toggleSpreadShot);
         document.getElementById('skill-2').addEventListener('click', repairTargets);
         document.getElementById('skill-3').addEventListener('click', toggleGunActive);
@@ -933,13 +618,11 @@
         function createBullet() {
             if (gameOver || !isFiring) return; 
             
-            const numBullets = spreadShotActive ? 3 : 1;
             const angles = spreadShotActive ? [-0.174, 0, 0.174] : [0]; 
-            
             const startX = mouseX - 4; 
-            const startY = mouseY - 20; 
+            const startY = mouseY - 16; 
 
-            for (let i = 0; i < numBullets; i++) {
+            for (let i = 0; i < angles.length; i++) {
                 const angle = angles[i];
                 const bullet = document.createElement('div');
                 bullet.className = 'bullet';
@@ -947,15 +630,11 @@
                 bullet.style.left = `${startX}px`;
                 bullet.style.top = `${startY}px`;
 
-                const vx = Math.sin(angle) * BULLET_SPEED * 0.5; 
+                const vx = Math.sin(angle) * BULLET_SPEED; 
                 const vy = -Math.cos(angle) * BULLET_SPEED;
                 
                 const bulletObj = {
-                    el: bullet,
-                    x: startX,
-                    y: startY,
-                    vx: vx,
-                    vy: vy
+                    el: bullet, x: startX, y: startY, vx: vx, vy: vy
                 };
                 
                 bullets.push(bulletObj);
@@ -968,7 +647,7 @@
 
             const currentFireRate = spreadShotActive ? FIRE_RATE * 1.5 : FIRE_RATE;
 
-            if (currentTime - lastBulletTime > currentFireRate) {
+            if (isFiring && currentTime - lastBulletTime > currentFireRate) {
                 createBullet();
                 lastBulletTime = currentTime;
             }
@@ -1016,14 +695,26 @@
                         break; 
                     }
                 }
-
                 return !hit; 
             });
         }
 
-        // Initialize targets (Phase 1) and start the game loop on load
         window.onload = () => {
+             // Glitching text content toggle
+            let isDev = true;
+            if (glitchTitleEl) {
+                setInterval(() => {
+                    isDev = !isDev;
+                    glitchTitleEl.textContent = isDev ? 'DEV' : 'DESIGNER';
+                }, 1200); 
+            }
+
+            setupSkillsMatrixSection(); 
             initializeTargets(); 
+            
+            toggleSkillButtonVisual('skill-1', spreadShotActive);
+            toggleSkillButtonVisual('skill-3', isFiring);
+            
             requestAnimationFrame(gameLoop);
         };
 
