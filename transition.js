@@ -105,72 +105,26 @@ const iconsData = {
   title: 'Projects',
   icon: `<svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>`,
   content: `
-    <div class="projects-container">
+    <div>
       <h3 class="text-2xl font-bold mb-6 text-gray-800">Featured Projects</h3>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
-        <div class="project-card bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1501167525333-33b619f5c259?q=80&w=2070" alt="LGU 2 Journal Project" class="w-full h-48 object-cover">
-          <div class="p-6 flex flex-col flex-grow">
+        <div class="project-card bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
+          <img src="https://images.unsplash.com/photo-1501167525333-33b619f5c259?q=80&w=2070" alt="Project Image" class="w-full h-48 object-cover">
+          <div class="p-5 flex flex-col flex-grow">
             <div class="flex items-center gap-2 mb-3">
-              <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">PHP</span>
-              <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Tailwind CSS</span>
+              <span class="bg-gray-200 text-gray-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">Tag 1</span>
+              <span class="bg-gray-200 text-gray-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">Tag 2</span>
             </div>
-            <h4 class="text-gray-900 font-bold text-xl mb-2">LGU 2 Journal</h4>
-            <p class="text-gray-600 text-sm mb-4 flex-grow">A modern, responsive dashboard for the LGU 2 Journal system, built with PHP and styled with Tailwind CSS.</p>
+            <h4 class="text-gray-900 font-bold text-xl mb-2">Project Title</h4>
+            <p class="text-gray-600 text-sm mb-4 flex-grow">A brief, compelling description of the project goes right here.</p>
             <div class="mt-auto text-center">
               <a href="#" class="inline-block bg-blue-50 text-blue-700 font-semibold py-2 px-8 rounded-full hover:bg-blue-100 transition-colors">Read More</a>
             </div>
           </div>
         </div>
-
-        <div class="project-card bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070" alt="Data Visualization App" class="w-full h-48 object-cover">
-          <div class="p-6 flex flex-col flex-grow">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">JavaScript</span>
-                <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">API</span>
-            </div>
-            <h4 class="text-gray-900 font-bold text-xl mb-2">Data Viz App</h4>
-            <p class="text-gray-600 text-sm mb-4 flex-grow">Dashboard-style web app showcasing component-based layouts and data visualization from a live API.</p>
-            <div class="mt-auto text-center">
-              <a href="#" class="inline-block bg-blue-50 text-blue-700 font-semibold py-2 px-8 rounded-full hover:bg-blue-100 transition-colors">Read More</a>
-            </div>
-          </div>
         </div>
-
-        <div class="project-card bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1516131206008-dd041a3764ce?q=80&w=2070" alt="Full-Stack Application" class="w-full h-48 object-cover">
-          <div class="p-6 flex flex-col flex-grow">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Full-Stack</span>
-                <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Auth</span>
-            </div>
-            <h4 class="text-gray-900 font-bold text-xl mb-2">Authentication System</h4>
-            <p class="text-gray-600 text-sm mb-4 flex-grow">A sample full-stack web application highlighting API integration, authentication, and responsive design.</p>
-            <div class="mt-auto text-center">
-              <a href="#" class="inline-block bg-blue-50 text-blue-700 font-semibold py-2 px-8 rounded-full hover:bg-blue-100 transition-colors">Read More</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="project-card bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070" alt="Creative UI Demo" class="w-full h-48 object-cover">
-          <div class="p-6 flex flex-col flex-grow">
-              <div class="flex items-center gap-2 mb-3">
-                  <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">UI/UX</span>
-                  <span class="bg-pink-100 text-pink-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Minimalist</span>
-              </div>
-              <h4 class="text-gray-900 font-bold text-xl mb-2">Minimalist Landing Page</h4>
-              <p class="text-gray-600 text-sm mb-4 flex-grow">A clean landing page and creative UI demo project. Perfect for showcasing modern design principles.</p>
-              <div class="mt-auto text-center">
-                <a href="#" class="inline-block bg-blue-50 text-blue-700 font-semibold py-2 px-8 rounded-full hover:bg-blue-100 transition-colors">Read More</a>
-              </div>
-            </div>
-        </div>
-
-      </div>
     </div>
   `,
   position: { top: '20px', left: '200px' }
