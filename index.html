@@ -244,13 +244,49 @@
             letter-spacing: 2px;
         }
         
-        .glitching {
-            animation: welcomeGlitch 0.8s linear;
-        }
-
         .glitching-text {
             animation: textGlitch 0.3s infinite;
         }
+
+        /* NEW: Styles for the split text effect */
+        #xp-welcome-screen h1 {
+            position: relative;
+            color: transparent; /* Hide original text */
+        }
+
+        #xp-welcome-screen h1::before,
+        #xp-welcome-screen h1::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            color: white;
+        }
+
+        #xp-welcome-screen h1::before {
+            clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+        }
+
+        #xp-welcome-screen h1::after {
+            clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
+        }
+        
+        /* NEW: Animation triggers */
+        #xp-welcome-screen.glitching {
+             animation: glitch-border 0.5s linear infinite;
+        }
+        
+        #xp-welcome-screen.glitching h1::before {
+            animation: glitch-top 1s linear infinite reverse;
+        }
+
+        #xp-welcome-screen.glitching h1::after {
+            animation: glitch-bottom 1.5s linear infinite reverse;
+        }
+        
 
         @keyframes textGlitch {
             0% { transform: translate(0, 0); color: white; }
@@ -262,18 +298,45 @@
             100% { transform: translate(0, 0); color: white; }
         }
 
-        @keyframes welcomeGlitch {
-            0%, 100% { transform: translate(0, 0); opacity: 1; filter: none; }
-            10% { transform: translate(-5px, -5px); filter: hue-rotate(90deg) brightness(1.5); }
-            20% { transform: translate(5px, 5px); opacity: 0.8; }
-            30% { transform: translate(-5px, 5px); filter: hue-rotate(180deg) saturate(2); }
-            40% { transform: translate(5px, -5px); }
-            50% { transform: translate(-5px, -5px); opacity: 0.6; filter: hue-rotate(270deg) contrast(3); }
-            60% { transform: translate(5px, 5px); }
-            70% { transform: translate(-5px, 5px); filter: invert(1); }
-            80% { transform: translate(5px, -5px); opacity: 0.9; }
-            90% { transform: translate(-5px, -5px); filter: hue-rotate(360deg); }
+        /* NEW: Keyframe Animations */
+        @keyframes glitch-border {
+            0% { box-shadow: 0 0 0 2px cyan, inset 0 0 0 2px cyan; }
+            10% { box-shadow: 0 0 0 2px red, inset 0 0 0 2px red, 5px 5px 0 2px cyan, inset -5px -5px 0 2px cyan; }
+            20% { box-shadow: 0 0 0 2px cyan, inset 0 0 0 2px cyan; }
+            40% { box-shadow: 0 0 0 2px red, inset 0 0 0 2px red, -5px -5px 0 2px cyan, inset 5px 5px 0 2px cyan; }
+            60% { box-shadow: 0 0 0 2px cyan, inset 0 0 0 2px cyan; }
+            80% { box-shadow: 0 0 0 2px red, inset 0 0 0 2px red, 5px -5px 0 2px cyan, inset -5px 5px 0 2px cyan; }
+            100% { box-shadow: 0 0 0 2px cyan, inset 0 0 0 2px cyan; }
         }
+
+        @keyframes glitch-top {
+            0% { transform: translate(0, 0); }
+            10% { transform: translate(5px, -5px); }
+            20% { transform: translate(-5px, 5px); }
+            30% { transform: translate(5px, 5px); }
+            40% { transform: translate(-5px, -5px); }
+            50% { transform: translate(0, 0); }
+            60% { transform: translate(10px, -2px); }
+            70% { transform: translate(-10px, 2px); }
+            80% { transform: translate(0, 0); }
+            90% { transform: translate(-5px, 5px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        @keyframes glitch-bottom {
+            0% { transform: translate(0, 0); }
+            10% { transform: translate(-5px, 5px); }
+            20% { transform: translate(5px, -5px); }
+            30% { transform: translate(-5px, -5px); }
+            40% { transform: translate(5px, 5px); }
+            50% { transform: translate(0, 0); }
+            60% { transform: translate(-10px, 2px); }
+            70% { transform: translate(10px, -2px); }
+            80% { transform: translate(0, 0); }
+            90% { transform: translate(5px, -5px); }
+            100% { transform: translate(0, 0); }
+        }
+
 
         .warning-popup { position: fixed; border: 2px solid var(--main-green); background: var(--window-bg); color: var(--main-green); box-shadow: 4px 4px 0px rgba(0, 224, 56, 0.2); width: 300px; z-index: 101; padding: 10px; font-family: 'VT323', monospace; }
         .warning-popup .title-bar { background: var(--dark-green); color: var(--bg-color); padding: 5px; font-weight: bold; display: flex; justify-content: space-between; }
@@ -327,7 +390,7 @@
     </div>
     
     <div id="xp-welcome-screen" class="hidden">
-        <h1>Welcome</h1>
+        <h1 data-text="Welcome">Welcome</h1>
     </div>
 
     <div id="glitch-container" class="hidden"></div>
@@ -405,7 +468,6 @@
             const loginBrandingSubtitle = document.querySelector('#login-branding .subtitle');
             const userProfileName = document.querySelector('#user-profile .name');
             const userProfileSubtitle = document.querySelector('#user-profile .user-details .subtitle');
-            // **NEW**: Get the logo text element
             const loginLogoText = document.querySelector('.login-logo .logo-text');
             
             const elementsToGlitch = [loginBrandingSubtitle, userProfileName, userProfileSubtitle, loginLogoText];
@@ -415,15 +477,13 @@
                 brandingSubtitle: loginBrandingSubtitle.textContent,
                 profileName: userProfileName.textContent,
                 profileSubtitle: userProfileSubtitle.textContent,
-                // **NEW**: Store the original logo HTML
                 logoText: loginLogoText.innerHTML,
             };
 
-            // **NEW**: Array of "translations" for the logo
             const glitchLanguages = [
                 'ローレンスXP', '로렌스XP', 'ЛоуренсXP', 'لورانسXP', '劳伦斯XP',
                 'LαwrεncεXP', 'ŁąŵŗęŉċëXP', 'L̷a̷w̷r̷e̷n̷c̷e̷X̷P̷', 'LคwгєภςєXP',
-                'L̲a̲w̲r̲e̲n̲c̲e̲X̲P', 'L0r3nc3XP', 'SYSTEM_ERROR'
+                'L̲a̲w̲r̲e̲n̲c̲e̲X̲P̲', 'L0r3nc3XP', 'SYSTEM_ERROR'
             ];
 
             let glitchInterval = setInterval(() => {
@@ -431,7 +491,6 @@
                 userProfileName.textContent = Math.random() > 0.5 ? originalTexts.profileName : "mystery";
                 userProfileSubtitle.textContent = Math.random() > 0.5 ? originalTexts.profileSubtitle : "????????";
                 
-                // **NEW**: Continuously change the logo text
                 const randomLang = glitchLanguages[Math.floor(Math.random() * glitchLanguages.length)];
                 loginLogoText.innerHTML = randomLang;
 
@@ -444,7 +503,6 @@
                 loginBrandingSubtitle.textContent = originalTexts.brandingSubtitle;
                 userProfileName.textContent = originalTexts.profileName;
                 userProfileSubtitle.textContent = originalTexts.profileSubtitle;
-                // **NEW**: Restore the original logo text
                 loginLogoText.innerHTML = originalTexts.logoText;
 
                 // --- Proceed to main hacked sequence ---
@@ -454,6 +512,7 @@
                     xpWelcomeScreen.classList.remove('hidden');
 
                     setTimeout(() => {
+                        // This class now triggers all the new glitch animations
                         xpWelcomeScreen.classList.add('glitching');
 
                         setTimeout(() => {
@@ -494,13 +553,13 @@
                                 displayWarningsLoop(); // Start the loop
                             }, 200);
 
-                        }, 800);
+                        }, 1200); // Increased duration for the new effect to be visible
 
-                    }, 2500);
+                    }, 500);
 
                 }, 500);
 
-            }, 2000); // Duration of the new login screen glitch
+            }, 2000); // Duration of the login screen glitch
         });
 
         // --- START THE PROCESS ---
