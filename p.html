@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leroza.dev - Retro Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Retro Terminal Font -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+    <style>
+        /* Define Custom Colors for Theme */
+        :root {
+            --color-khaki: #C3B091;
+            --color-maroon: #800000;
+            --color-white: #FFFFFF;
+        }
+
+        /*
+        * 1. Global Reset & Scroll Snap Setup (Retro Font Applied)
+        */
+        body {
+            cursor: none; /* Hide default cursor */
+            font-family: 'VT323', monospace;
+            background-color: var(--color-maroon);
+            color: var(--color-white);
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+        }
+
+        section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            scroll-snap-align: start;
+            padding: 2rem;
+            /* Retro glow/shadow */
+            text-shadow: 2px 2px 0px var(--color-maroon), -2px -2px 0px var(--color-maroon);
+        }
+
+        /*
+        * 2. The Pixel Plane Cursor (Now White)
+        */
+        #plane-cursor {
+            position: fixed;
+            width: 16px;
+            height: 16px;
+            pointer-events: none;
+            z-index: 10000;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            transition: transform 0.05s linear; /* Smooth mouse tracking */
+        }
+        
+        .plane-body {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px; /* Central core */
+            height: 4px;
+            background-color: var(--color-white); 
+            box-shadow: 
+                /* Wings */
+                -8px 0 var(--color-white), 8px 0 var(--color-white),
+                /* Nose/Firing Port */
+                0 -8px var(--color-white), 0 -12px var(--color-white),
+                /* Tail */
+                0 8px var(--color-white); 
+            transform: translate(-50%, -50%);
+        }
+
+        /*
+        * 3. Bullet Styling (Orange Dot - Kept from original request)
+        */
+        .bullet {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background-color: #ff8c00; /* Bright orange */
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 10px #ff8c00, 0 0 20px #ff8c00;
+            opacity: 1;
+            transition: opacity 0.1s;
+        }
+
+        /*
+        * 4. Text Spans (Destructible Targets)
+        */
+        .destructible-text span {
+            display: inline-block;
+            transition: opacity 0.3s, transform 0.3s;
+            line-height: 1.2;
+        }
+
+        .destroyed {
+            opacity: 0 !important;
+            transform: scale(0.5) translateY(-20px);
+        }
+        
+        /*
+        * 5. Retro Life Bar / HUD Styles
+        */
+        #lifebar-container {
+            border: 4px solid var(--color-white);
+            background-color: var(--color-khaki);
+            box-shadow: inset -4px -4px 0px var(--color-maroon), 4px 4px 0px #000000;
+            padding: 8px;
+        }
+
+        .health-bar-frame {
+            border: 2px solid var(--color-maroon);
+            background-color: var(--color-maroon);
+            height: 16px;
+            width: 100%;
+        }
+
+        .health-bar-fill {
+            height: 100%;
+            /* Removed static width: 80% to be controlled by JavaScript */
+            background-color: #00ff00; /* Classic green health */
+            transition: width 0.5s;
+        }
+
+        /*
+        * 6. Confetti Style
+        */
+        .confetti {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 3s ease-out, opacity 2.5s ease-out;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- The Custom Plane Cursor -->
+    <div id="plane-cursor" aria-hidden="true">
+        <div class="plane-body"></div>
+    </div>
+
+    <!-- Bullet Container -->
+    <div id="bullet-container"></div>
+
+    <!-- Confetti Container -->
+    <div id="confetti-container"></div>
+
+    <!-- Header / LIFEBAR HUD (Fixed for all scrolls) -->
+    <header class="fixed top-0 left-0 right-0 z-50 p-3 bg-[var(--color-maroon)] shadow-2xl">
+        <nav class="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto space-y-3 md:space-y-0 text-lg">
+            
+            <!-- Player Name / Title -->
+            <div class="text-xl md:text-3xl font-bold text-[var(--color-white)] tracking-widest border-b-4 border-b-[var(--color-khaki)] pb-1">
+                PLAYER: LEROZA
+            </div>
+
+            <!-- Life Bar / Stats Panel -->
+            <div id="lifebar-container" class="w-full md:w-auto flex items-center space-x-4">
+                
+                <!-- Health Bar Visual (ID added for JS control) -->
+                <div class="hidden md:block w-40">
+                    <span class="text-sm text-[var(--color-maroon)]">HP: </span>
+                    <div class="health-bar-frame">
+                        <div id="health-fill" class="health-bar-fill" style="width: 100%;"></div>
+                    </div>
+                </div>
+
+                <!-- Navigation Links (Acts as Stat/Menu Links) -->
+                <div class="flex flex-1 justify-around md:space-x-4">
+                    <a href="#intro" class="text-[var(--color-maroon)] hover:text-white transition duration-200">[ HOME ]</a>
+                    <a href="#work" class="text-[var(--color-maroon)] hover:text-white transition duration-200">[ PROJECTS ]</a>
+                    <a href="#contact" class="text-[var(--color-maroon)] hover:text-white transition duration-200">[ CONNECT ]</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- SECTION 1: INTRO (Maroon Background) -->
+    <section id="intro" class="bg-[var(--color-maroon)]">
+        <div class="text-center max-w-4xl px-4">
+            <h2 class="text-7xl md:text-9xl font-extrabold mb-4 text-[var(--color-khaki)] destructible-text">
+                MISSION START.
+            </h2>
+            <p class="text-3xl md:text-5xl font-light text-[var(--color-white)] mt-8 destructible-text">
+                DESIGNER LEROZA.DEV
+            </p>
+            <p class="text-xl md:text-2xl font-extralight text-[var(--color-khaki)] mt-8">
+                DESTROY THE TYPO.
+            </p>
+        </div>
+    </section>
+
+    <!-- SECTION 2: WORK (Khaki Background) -->
+    <section id="work" class="bg-[var(--color-khaki)]">
+        <div class="text-center max-w-5xl px-4 text-[var(--color-maroon)]">
+            <h2 class="text-7xl md:text-9xl font-extrabold mb-4 destructible-text">
+                PROJECT_LOG
+            </h2>
+            <div class="grid md:grid-cols-3 gap-8 text-left mt-12">
+                <div class="p-6 bg-[var(--color-maroon)] rounded-xl shadow-2xl border-4 border-white">
+                    <h3 class="text-3xl font-bold text-[var(--color-khaki)] destructible-text">GAME_UI_V1</h3>
+                    <p class="mt-3 text-lg text-white">Interface systems engineered for low-latency competitive titles.</p>
+                </div>
+                <div class="p-6 bg-[var(--color-maroon)] rounded-xl shadow-2xl border-4 border-white">
+                    <h3 class="text-3xl font-bold text-[var(--color-khaki)] destructible-text">WEB_APP_V2</h3>
+                    <p class="mt-3 text-lg text-white">Full-stack web applications, focusing on scalable architecture.</p>
+                </div>
+                <div class="p-6 bg-[var(--color-maroon)] rounded-xl shadow-2xl border-4 border-white">
+                    <h3 class="text-3xl font-bold text-[var(--color-khaki)] destructible-text">3D_ASSETS</h3>
+                    <p class="mt-3 text-lg text-white">Optimized 3D models and environments for real-time rendering.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: CONTACT (Maroon Background) -->
+    <section id="contact" class="bg-[var(--color-maroon)]">
+        <div class="text-center max-w-4xl px-4">
+            <h2 class="text-7xl md:text-9xl font-extrabold mb-4 text-[var(--color-khaki)] destructible-text">
+                GAME OVER.
+            </h2>
+            <p class="text-3xl md:text-5xl font-light text-[var(--color-white)] mt-8 destructible-text">
+                LEROZA@DEV.IO
+            </p>
+            <div class="mt-12">
+                <a href="mailto:leroza@dev.io" class="inline-block px-8 py-4 text-2xl font-bold bg-[var(--color-khaki)] text-[var(--color-maroon)] rounded-none shadow-2xl border-4 border-white hover:bg-white transition duration-300 transform hover:scale-105">
+                    INITIATE_CONTACT
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // --- Game Setup and Constants ---
+        const planeCursor = document.getElementById('plane-cursor');
+        const bulletContainer = document.getElementById('bullet-container');
+        const healthFillElement = document.getElementById('health-fill');
+        const confettiContainer = document.getElementById('confetti-container');
+        const targets = []; 
+        
+        const BULLET_SPEED = 10; 
+        const FIRE_RATE = 50; 
+        const CONFETTI_COLORS = ['#ff8c00', '#C3B091', '#FFFFFF', '#00ff00']; // Orange, Khaki, White, Green
+
+        let mouseX = 0;
+        let mouseY = 0;
+        let lastBulletTime = 0;
+        let bullets = [];
+        
+        let totalTargets = 0;
+        let destroyedTargets = 0;
+        let gameOver = false;
+
+        /**
+         * 1. Pre-process text and wrap every letter in a <span>.
+         * This makes collision detection possible on individual characters.
+         */
+        function initializeTargets() {
+            document.querySelectorAll('.destructible-text').forEach(element => {
+                const textContent = element.textContent.trim();
+                element.innerHTML = ''; // Clear original content
+                
+                // Wrap each character in a span
+                textContent.split('').forEach(char => {
+                    const span = document.createElement('span');
+                    span.textContent = char === ' ' ? '\u00A0' : char; 
+                    span.dataset.destroyed = 'false';
+                    element.appendChild(span);
+                    if (char !== ' ') {
+                        targets.push(span);
+                    }
+                });
+            });
+            totalTargets = targets.length;
+            console.log(`Total destructible targets: ${totalTargets}`);
+        }
+        
+        /**
+         * 2. Health Bar and Game State Management
+         */
+        function updateHealthBar() {
+            if (totalTargets === 0) return;
+
+            const remainingPercentage = 100 - ((destroyedTargets / totalTargets) * 100);
+            
+            // Set the width of the HP bar
+            healthFillElement.style.width = `${Math.max(0, remainingPercentage)}%`; 
+            
+            // Optional: Change color if low health
+            if (remainingPercentage < 25) {
+                healthFillElement.style.backgroundColor = '#ff0000'; // Red
+            } else {
+                healthFillElement.style.backgroundColor = '#00ff00'; // Green
+            }
+
+            // Check for Game Over condition
+            if (destroyedTargets === totalTargets && !gameOver) {
+                gameOver = true;
+                triggerConfetti();
+                console.log("GAME OVER! All targets destroyed.");
+            }
+        }
+        
+        /**
+         * 3. Confetti Effect (Pure JS)
+         */
+        function triggerConfetti() {
+            const count = 50; // Number of particles
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Random color
+                confetti.style.backgroundColor = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+                
+                // Start position near the center of the viewport
+                const startX = window.innerWidth / 2;
+                const startY = window.innerHeight / 2;
+                
+                confetti.style.left = `${startX}px`;
+                confetti.style.top = `${startY}px`;
+                
+                // Apply random movement (confetti spread)
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = Math.random() * 500 + 100;
+                
+                const endX = startX + Math.cos(angle) * distance;
+                const endY = startY + Math.sin(angle) * distance;
+
+                // Apply styles immediately before transition
+                setTimeout(() => {
+                    confetti.style.opacity = '0';
+                    confetti.style.transform = `translate(${endX - startX}px, ${endY - startY}px) rotate(${Math.random() * 360}deg)`;
+                }, 10);
+
+                confettiContainer.appendChild(confetti);
+
+                // Clean up the element after animation
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+
+        /**
+         * 4. Cursor Tracking
+         */
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            planeCursor.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+        });
+
+        /**
+         * 5. Bullet Creation and Firing
+         */
+        function createBullet() {
+            if (gameOver) return; // Stop shooting after game over
+            
+            const bullet = document.createElement('div');
+            bullet.className = 'bullet';
+            
+            const startX = mouseX - 4; // Center the bullet element
+            const startY = mouseY - 20; 
+            
+            bullet.style.left = `${startX}px`;
+            bullet.style.top = `${startY}px`;
+            
+            const bulletObj = {
+                el: bullet,
+                x: startX,
+                y: startY,
+                vx: 0,
+                vy: -BULLET_SPEED 
+            };
+            
+            bullets.push(bulletObj);
+            bulletContainer.appendChild(bullet);
+        }
+
+        /**
+         * 6. Game Loop (using requestAnimationFrame for smooth animation)
+         */
+        function gameLoop(currentTime) {
+            requestAnimationFrame(gameLoop);
+
+            // --- Firing Logic (Continuous Shooting) ---
+            if (currentTime - lastBulletTime > FIRE_RATE) {
+                createBullet();
+                lastBulletTime = currentTime;
+            }
+
+            // --- Update and Collision Check ---
+            bullets = bullets.filter(bullet => {
+                // Update position
+                bullet.x += bullet.vx;
+                bullet.y += bullet.vy;
+
+                // Move DOM element
+                bullet.el.style.left = `${bullet.x}px`;
+                bullet.el.style.top = `${bullet.y}px`;
+
+                // Check for off-screen
+                if (bullet.y < 0) {
+                    bullet.el.remove();
+                    return false; 
+                }
+
+                // Check collisions against targets
+                let hit = false;
+                for (let i = 0; i < targets.length; i++) {
+                    const targetSpan = targets[i];
+                    
+                    if (targetSpan.dataset.destroyed === 'true') continue;
+
+                    const rect = targetSpan.getBoundingClientRect();
+
+                    // Simple AABB Collision Detection
+                    const bulletSize = 8;
+                    const collision = (
+                        bullet.x < rect.right &&
+                        bullet.x + bulletSize > rect.left &&
+                        bullet.y < rect.bottom &&
+                        bullet.y + bulletSize > rect.top
+                    );
+                    
+                    if (collision) {
+                        // Destruction Logic
+                        targetSpan.classList.add('destroyed');
+                        targetSpan.dataset.destroyed = 'true';
+                        
+                        // Update game state
+                        destroyedTargets++;
+                        updateHealthBar();
+                        
+                        // Destroy the bullet
+                        bullet.el.remove();
+                        hit = true;
+                        
+                        break; 
+                    }
+                }
+
+                return !hit; 
+            });
+        }
+
+        // Initialize targets and start the game loop on load
+        window.onload = () => {
+            initializeTargets();
+            updateHealthBar(); // Set initial 100% health
+            requestAnimationFrame(gameLoop);
+        };
+
+    </script>
+</body>
+</html>
