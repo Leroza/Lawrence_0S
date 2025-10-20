@@ -51,28 +51,53 @@ const iconsData = {
          icon: `<svg fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM9 12c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 6H9v-1.21c0-2 4-3.1 6-3.1s6 1.1 6 3.1V18h-6z"/></svg>`,
          content: `
            <div class="resume-container">
-               <div class="resume-photo">
-                    <img src="https://placehold.co/100x100/1a1a1a/00e038?text=LawrenceOS" alt="LawrenceOS Barraza">
-               </div>
-               <div class="resume-header">
-                   <h1>LawrenceOS Barraza</h1>
-                   <p>Digital Dreamweaver & Web Designer</p>
-               </div>
-           </div>
-           <div class="resume-section">
-               <h3>> Experience</h3>
-               <p><strong>Lead Web Designer</strong> | PixelPerfect Inc. | 2022 - Present</p>
-               <p><strong>UI/UX Intern</strong> | Creative Solutions | 2021 - 2022</p>
-           </div>
-            <div class="resume-section">
-               <h3>> Education</h3>
-               <p><strong>B.S. in Web Design & Development</strong> | University of Technology | 2017 - 2021</p>
-           </div>
-           <div class="resume-section hidden" id="ai-bio-section">
-               <h3>> Fun Bio (from AI)</h3>
-               <p id="ai-bio-content"></p>
-           </div>
-           <button class="gemini-btn" id="generate-bio-btn">✨ Generate Fun Bio</button>
+<div class="resume-photo">
+  <img src="https://placehold.co/100x100/1a1a1a/00e038?text=LB" alt="Lawrence Barraza">
+</div>
+
+<div class="resume-header">
+  <h1>Lawrence Barraza</h1>
+  <p>Web Developer | Ethical Coder | Team Leader</p>
+</div>
+</div>
+
+<div class="resume-section">
+  <h3>> Profile</h3>
+  <p>A motivated and disciplined aspiring web developer with a passion for clean, ethical, and user-friendly coding. Known for being kind, patient, and a natural leader who thrives in collaborative environments. Continuously improving technical and creative skills to deliver reliable and efficient results.</p>
+</div>
+
+<div class="resume-section">
+  <h3>> Skills</h3>
+  <ul class="list-disc list-inside">
+    <li>HTML, CSS, JavaScript</li>
+    <li>Bootstrap, Tailwind CSS</li>
+    <li>PHP</li>
+    <li>Ethical Coding Practices</li>
+  </ul>
+</div>
+
+<div class="resume-section">
+  <h3>> Seminars & Certificates</h3>
+  <p><strong>NSTP Seminar</strong> — Community and Leadership Development</p>
+  <p><strong>Subic Seminar</strong> — Personal Growth and Team Building</p>
+</div>
+
+<div class="resume-section">
+  <h3>> Education</h3>
+  <p><strong>Bestlink College of the Philippines</strong> — 2025–2026</p>
+  <p><strong>Amparo High School</strong> — 2021–2022</p>
+</div>
+
+<div class="resume-section">
+  <h3>> Personal Traits</h3>
+  <ul class="list-disc list-inside">
+    <li>Kind and patient</li>
+    <li>Strong leadership qualities</li>
+    <li>Obedient and disciplined</li>
+    <li>Creative and focused under pressure</li>
+  </ul>
+</div>
+
          `,
          position: { top: '20px', left: '110px' }
     },
@@ -85,7 +110,6 @@ const iconsData = {
                         <li class="project-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v12H4z" opacity=".3"/><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H4V4h16v12zM6 10h2v2H6zm0-3h2v2H6zm0-3h2v2H6zm4 6h8v2h-8zm0-3h8v2h-8zm0-3h8v2h-8z"/></svg> <span>Zenith Finance Dashboard</span></li>
                         <li class="project-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg> <span>Creative Agency Rebrand</span></li>
                   </ul>
-                  <button class="gemini-btn" id="suggest-projects-btn">✨ Suggest New Projects</button>
                   `,
         position: { top: '20px', left: '200px' }
     },
