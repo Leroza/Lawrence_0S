@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Table with Four Legs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .table-top {
+      perspective: 1000px;
+    }
+    .flicker {
+      animation: flicker 0.12s infinite;
+    }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gray-900">
+
+  <!-- Monitor on top of table -->
+  <div class="relative">
+    <!-- Desktop monitor -->
+    <div class="w-56 h-36 bg-gray-800 rounded-md shadow-inner flex items-center justify-center text-gray-200 text-sm flicker">
+      <span>🖥️ Flickering Monitor</span>
+    </div>
+
+    <!-- Table -->
+    <div class="mt-4 table-top relative w-72 h-4 bg-yellow-700 rounded-t-md shadow-md">
+      <!-- Legs -->
+      <div class="absolute left-3 top-full w-2 h-20 bg-yellow-800 rounded-b-md"></div>
+      <div class="absolute right-3 top-full w-2 h-20 bg-yellow-800 rounded-b-md"></div>
+      <div class="absolute left-12 top-full w-2 h-20 bg-yellow-800 rounded-b-md"></div>
+      <div class="absolute right-12 top-full w-2 h-20 bg-yellow-800 rounded-b-md"></div>
+    </div>
+  </div>
+
+</body>
+</html>
