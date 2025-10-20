@@ -105,50 +105,26 @@ const iconsData = {
   title: 'Projects',
   icon: `<svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>`,
   content: `
-    <div class="projects-container space-y-6">
-      <h3 class="text-lg font-semibold mb-4">> Featured Projects</h3>
+    <div class="projects-container space-y-8">
+      <h3 class="text-2xl font-bold text-gray-200">> Featured Projects</h3>
 
-      <!-- Project 1 -->
-      <div class="project-card flex flex-col sm:flex-row bg-[#1e1e1e] rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
-        <img src="https://placehold.co/300x200/0f0f0f/00e038?text=Project+1" alt="Project 1" class="w-full sm:w-1/3 object-cover">
-        <div class="p-4 flex flex-col justify-center">
-          <h4 class="text-white font-semibold text-lg mb-1">Project Placeholder #1</h4>
-          <p class="text-gray-400 text-sm mb-2">A modern, responsive web design built to highlight creative front-end concepts. Replace this with your actual project details soon.</p>
-          <span class="text-emerald-400 text-sm font-medium cursor-pointer hover:underline">View Details →</span>
+      <div class="project-card flex flex-col sm:flex-row bg-[#2a2a2e] rounded-xl overflow-hidden border border-gray-700/60 shadow-lg hover:shadow-blue-500/10 hover:border-blue-500/70 transition-all duration-300">
+        
+        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600" alt="Project Image" class="w-full sm:w-1/3 h-48 sm:h-auto object-cover">
+
+        <div class="p-6 flex flex-col justify-center">
+          <div class="flex items-center gap-2 mb-3">
+              <span class="bg-blue-900/50 text-blue-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">PHP</span>
+              <span class="bg-cyan-900/50 text-cyan-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">Tailwind CSS</span>
+          </div>
+          <h4 class="text-white font-bold text-xl mb-2">LGU 2 Journal</h4>
+          <p class="text-gray-400 text-sm mb-4">A modern dashboard for the LGU 2 Journal system, built to be responsive and minimalist using Tailwind CSS.</p>
+          <a href="#" class="text-blue-400 font-semibold text-sm hover:underline self-start">
+            View Details →
+          </a>
         </div>
       </div>
-
-      <!-- Project 2 -->
-      <div class="project-card flex flex-col sm:flex-row bg-[#1e1e1e] rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
-        <img src="https://placehold.co/300x200/0f0f0f/00e038?text=Project+2" alt="Project 2" class="w-full sm:w-1/3 object-cover">
-        <div class="p-4 flex flex-col justify-center">
-          <h4 class="text-white font-semibold text-lg mb-1">Project Placeholder #2</h4>
-          <p class="text-gray-400 text-sm mb-2">Dashboard-style web app showcasing component-based layouts and data visualization. Perfect slot for your next Tailwind or PHP project.</p>
-          <span class="text-emerald-400 text-sm font-medium cursor-pointer hover:underline">View Details →</span>
-        </div>
       </div>
-
-      <!-- Project 3 -->
-      <div class="project-card flex flex-col sm:flex-row bg-[#1e1e1e] rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
-        <img src="https://placehold.co/300x200/0f0f0f/00e038?text=Project+3" alt="Project 3" class="w-full sm:w-1/3 object-cover">
-        <div class="p-4 flex flex-col justify-center">
-          <h4 class="text-white font-semibold text-lg mb-1">Project Placeholder #3</h4>
-          <p class="text-gray-400 text-sm mb-2">A sample full-stack web application highlighting API integration, authentication, and responsive design.</p>
-          <span class="text-emerald-400 text-sm font-medium cursor-pointer hover:underline">View Details →</span>
-        </div>
-      </div>
-
-      <!-- Project 4 -->
-      <div class="project-card flex flex-col sm:flex-row bg-[#1e1e1e] rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
-        <img src="https://placehold.co/300x200/0f0f0f/00e038?text=Project+4" alt="Project 4" class="w-full sm:w-1/3 object-cover">
-        <div class="p-4 flex flex-col justify-center">
-          <h4 class="text-white font-semibold text-lg mb-1">Project Placeholder #4</h4>
-          <p class="text-gray-400 text-sm mb-2">A clean landing page or creative UI demo project. You can replace this with your real design screenshots or GitHub links.</p>
-          <span class="text-emerald-400 text-sm font-medium cursor-pointer hover:underline">View Details →</span>
-        </div>
-      </div>
-
-    </div>
   `,
   position: { top: '20px', left: '200px' }
 },
