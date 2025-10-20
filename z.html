@@ -164,7 +164,33 @@
         #hero, #typography, #projects, #skills {
             min-height: 100vh; /* Set all main sections to full viewport height */
         }
-
+        
+        /* --- GLASS NAVIGATION STYLES --- */
+        .glass-nav-item {
+            position: relative;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .glass-nav-item:hover {
+            transform: translateX(-4px);
+            opacity: 1;
+        }
+        .glass-nav-item.active {
+            font-weight: 700;
+            opacity: 1;
+            color: var(--color-accent); /* Use the highest contrast color */
+        }
+        .glass-nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: -16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--color-text);
+            box-shadow: 0 0 5px var(--color-text);
+        }
         /* --- CUSTOM CURSOR STYLES --- */
 
         /* Pulsate Animation for Main Bubble */
@@ -246,7 +272,16 @@
             </div>
         </div>
     </header>
-
+    
+    <nav id="glass-nav" class="fixed right-6 top-1/2 -translate-y-1/2 z-50 p-4 hidden md:block glass-background rounded-xl border border-[--color-glass-border] shadow-lg">
+        <ul class="space-y-4 text-sm font-medium uppercase tracking-widest opacity-80">
+            <li><a href="#hero" class="glass-nav-item" data-section="hero">Home</a></li>
+            <li><a href="#typography" class="glass-nav-item" data-section="typography">Study</a></li>
+            <li><a href="#projects" class="glass-nav-item" data-section="projects">Projects</a></li>
+            <li><a href="#skills" class="glass-nav-item" data-section="skills">Skills</a></li>
+            <li><a href="#contact" class="glass-nav-item" data-section="contact">Contact</a></li>
+        </ul>
+    </nav>
     <div id="cursor-bubble" class="fixed pointer-events-none rounded-full w-4 h-4 opacity-0 z-[100] bg-[--color-text]"></div>
 
 
@@ -303,9 +338,9 @@
             </div>
 
             <div class="text-center mt-20">
-                 <a href="#projects" class="text-sm uppercase tracking-widest text-[--color-text] opacity-60 hover:opacity-100 transition duration-300">
-                    Next: Projects <i data-lucide="arrow-down" class="w-4 h-4 inline-block ml-1"></i>
-                </a>
+                   <a href="#projects" class="text-sm uppercase tracking-widest text-[--color-text] opacity-60 hover:opacity-100 transition duration-300">
+                        Next: Projects <i data-lucide="arrow-down" class="w-4 h-4 inline-block ml-1"></i>
+                    </a>
             </div>
         </section>
         
@@ -340,7 +375,7 @@
             </div>
         </section>
         
-        <section id="br1-trigger" class="py-32"></section>
+        <section id="br1-trigger" class="py-12"></section>
 
         <section id="skills" class="px-6 lg:px-12 py-20 snap-start">
             <a href="#skills"><h2 class="text-4xl font-light mb-16 tracking-wider border-b border-gray-700 light:border-gray-200 pb-4 transition duration-300 hover:opacity-80">03. Skills & Experience</h2></a>
@@ -398,7 +433,7 @@
             </div>
         </section>
         
-        <section id="br2-trigger" class="py-32"></section>
+        <section id="br2-trigger" class="py-12"></section>
 
     </main>
     
@@ -613,23 +648,19 @@
     });
 
 
-    // --- Intersection Observer for Floating Scroll Animations ---
+    // --- Intersection Observer for Floating Scroll Animations & Nav Highlight ---
 
     document.addEventListener('DOMContentLoaded', () => {
         
-        // Define the targets to observe (the small trigger sections)
+        // --- Interstitial Animation Logic ---
         const br1Trigger = document.getElementById('br1-trigger');
         const br2Trigger = document.getElementById('br2-trigger');
-
-        // Define the elements to animate (the fixed floating divs)
         const br1Float = document.getElementById('br1-float');
         const br2Float = document.getElementById('br2-float');
-        
-        // State variable for the BR2 timeout
         let br2Timeout = null;
 
-        // Observer Callback Function
-        const callback = (entries) => {
+        // Observer for the floating interstitial messages
+        const interstitialCallback = (entries) => {
             entries.forEach(entry => {
                 const targetId = entry.target.id;
                 let floatElement;
@@ -638,75 +669,80 @@
                     floatElement = br1Float;
                 } else if (targetId === 'br2-trigger') {
                     floatElement = br2Float;
-                } else if (targetId === 'opportunity-text-wrapper') {
-                    // Handle the initial Hero text pop-up separately
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                    }
+                } else {
                     return;
                 }
 
-                if (floatElement) {
+                if (entry.isIntersecting) {
                     if (targetId === 'br1-trigger') {
-                           // BR1 Logic (Standard Visibility)
-                        if (entry.isIntersecting) {
-                            floatElement.classList.add('is-visible');
-                        } else {
-                            floatElement.classList.remove('is-visible');
-                        }
+                         floatElement.classList.add('is-visible');
                     } else if (targetId === 'br2-trigger') {
-                        // BR2 Logic (2-Second Visibility)
-                        if (entry.isIntersecting) {
-                            // Only set the timer if it's not already visible or waiting to hide
-                            if (!floatElement.classList.contains('is-visible')) {
-                                floatElement.classList.add('is-visible');
-
-                                // Clear any potential existing timeout
-                                if (br2Timeout) clearTimeout(br2Timeout);
-
-                                // Set a new timeout to hide the element after 2 seconds
-                                br2Timeout = setTimeout(() => {
-                                    floatElement.classList.remove('is-visible');
-                                    br2Timeout = null;
-                                }, 2000); // 2000 ms = 2 seconds
-                            }
-                        } else {
-                            // If the user scrolls past the trigger, hide immediately and clear timer
+                         if (!floatElement.classList.contains('is-visible')) {
+                            floatElement.classList.add('is-visible');
                             if (br2Timeout) clearTimeout(br2Timeout);
-                            floatElement.classList.remove('is-visible');
-                            br2Timeout = null;
+                            br2Timeout = setTimeout(() => {
+                                floatElement.classList.remove('is-visible');
+                                br2Timeout = null;
+                            }, 2000); // 2 seconds
                         }
+                    }
+                } else {
+                    if (targetId === 'br1-trigger') {
+                         floatElement.classList.remove('is-visible');
+                    } else if (targetId === 'br2-trigger') {
+                         if (br2Timeout) clearTimeout(br2Timeout);
+                         floatElement.classList.remove('is-visible');
+                         br2Timeout = null;
                     }
                 }
             });
         };
         
-        // Setup Observer: lowered threshold to 0.80 for smoother, earlier appearance.
-        const observer = new IntersectionObserver(callback, {
+        const interstitialObserver = new IntersectionObserver(interstitialCallback, {
             root: null,
             threshold: 0.80 
         });
         
-        // Observe the Hero opportunity text (uses the old scroll-fade style)
-        const opportunityText = document.getElementById('opportunity-text-wrapper');
-        if (opportunityText) {
-             // Use a different observer setup for the hero text that fires early
-             new IntersectionObserver((entries) => {
-                 entries.forEach(entry => {
-                     if (entry.isIntersecting) {
-                         entry.target.classList.add('is-visible');
-                     }
-                 })
-             }, { threshold: 0.05 }).observe(opportunityText);
-        }
+        if (br1Trigger) interstitialObserver.observe(br1Trigger);
+        if (br2Trigger) interstitialObserver.observe(br2Trigger);
 
-        // Observe the new trigger sections
-        if (br1Trigger) observer.observe(br1Trigger);
-        if (br2Trigger) observer.observe(br2Trigger);
+
+        // --- Floating Navigation Highlight Logic ---
+        const sections = document.querySelectorAll('section, footer');
+        const navItems = document.querySelectorAll('.glass-nav-item');
+        const headerOffset = document.querySelector('header').offsetHeight + 10; // Adjust for fixed header height
+        
+        // Create an observer for section highlighting
+        const navObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const currentSectionId = entry.target.id || 'contact'; // Footer doesn't have ID, set to contact
+                    navItems.forEach(item => {
+                        item.classList.remove('active');
+                        if (item.getAttribute('data-section') === currentSectionId) {
+                            item.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, {
+            // Root margin helps detect section change earlier, while section is still 10% visible
+            rootMargin: `-${headerOffset}px 0px -90% 0px`, 
+            threshold: 0.1 // Set to 10%
+        });
+
+        // Observe all main sections/footer
+        sections.forEach(section => {
+             // Exclude the small trigger sections from the main nav observer
+            if (!section.id.includes('trigger')) { 
+                navObserver.observe(section);
+            }
+        });
+
+
+        // --- Lucide Icons initialization (to render i tags into SVG icons) ---
+        lucide.createIcons();
     });
-
-    // --- Lucide Icons initialization (to render i tags into SVG icons) ---
-    lucide.createIcons();
 
 </script>
 </body>
