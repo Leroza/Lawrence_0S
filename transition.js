@@ -101,18 +101,44 @@ const iconsData = {
          `,
          position: { top: '20px', left: '110px' }
     },
-    'projects': {
-        title: 'Projects',
-        icon: `<svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>`,
-        content: `<h3>> Selected Works</h3>
-                  <ul class="project-list">
-                        <li class="project-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M14.59 2.09L15 2.5V3h-1.58l-1.3-1.3.48-.48c.19-.19.44-.29.7-.29.27 0 .52.1.71.29M5.5 3c.83 0 1.5.67 1.5 1.5S6.33 6 5.5 6 4 5.33 4 4.5 4.67 3 5.5 3m13.7 1.29l-3.09 3.09c-.19.19-.44.29-.7.29s-.52-.1-.71-.29l-.48-.48-1.3 1.3V10h.5l.41-.41 4.5-4.5c.29-.29.44-.68.44-1.09s-.15-.8-.44-1.09c-.29-.29-.68-.44-1.09-.44-.41 0-.8.15-1.09.44l-1.09 1.09-3.09 3.09-3.09-3.09L8.81 3.5c-.59-.58-1.59-.58-2.18 0l-1.09 1.09L3.46 6.67c-.29-.29-.44.68-.44 1.09 0 .41.15.8.44 1.09l4.5 4.5.41.41H9v-.5l1.3-1.3.48.48c.19.19.44.29.7.29s.52-.1.71-.29l3.09-3.09 3.09 3.09c.59.58 1.59.58 2.18 0l1.09-1.09 2.08-2.08c.29-.29.44-.68.44-1.09s-.15-.8-.44-1.09l-.1-.1zM18.5 13c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5m-13 7c-.83 0-1.5-.67-1.5-1.5S4.67 17 5.5 17s1.5.67 1.5 1.5S6.33 20 5.5 20m13-7c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5m0 7c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg> <span>Artisan Coffee Co.</span></li>
-                        <li class="project-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h16v12H4z" opacity=".3"/><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H4V4h16v12zM6 10h2v2H6zm0-3h2v2H6zm0-3h2v2H6zm4 6h8v2h-8zm0-3h8v2h-8zm0-3h8v2h-8z"/></svg> <span>Zenith Finance Dashboard</span></li>
-                        <li class="project-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg> <span>Creative Agency Rebrand</span></li>
-                  </ul>
-                  `,
-        position: { top: '20px', left: '200px' }
-    },
+'projects': {
+  title: 'Projects',
+  icon: `<svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>`,
+  content: `
+    <div class="projects-container space-y-4">
+      <h3 class="text-lg font-semibold mb-2">> Featured Projects</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        <div class="project-card bg-[#1e1e1e] p-3 rounded-xl shadow-md hover:shadow-lg transition">
+          <img src="https://placehold.co/400x200/0f0f0f/00e038?text=Project+1" alt="Project 1" class="rounded-lg mb-2">
+          <h4 class="font-semibold text-white">Project Placeholder #1</h4>
+          <p class="text-sm text-gray-400">A sample project to showcase layout and interactivity. Replace this with your real project later.</p>
+        </div>
+
+        <div class="project-card bg-[#1e1e1e] p-3 rounded-xl shadow-md hover:shadow-lg transition">
+          <img src="https://placehold.co/400x200/0f0f0f/00e038?text=Project+2" alt="Project 2" class="rounded-lg mb-2">
+          <h4 class="font-semibold text-white">Project Placeholder #2</h4>
+          <p class="text-sm text-gray-400">This slot is ready for your next web project or portfolio piece.</p>
+        </div>
+
+        <div class="project-card bg-[#1e1e1e] p-3 rounded-xl shadow-md hover:shadow-lg transition">
+          <img src="https://placehold.co/400x200/0f0f0f/00e038?text=Project+3" alt="Project 3" class="rounded-lg mb-2">
+          <h4 class="font-semibold text-white">Project Placeholder #3</h4>
+          <p class="text-sm text-gray-400">Show off your design or full-stack work here soon.</p>
+        </div>
+
+        <div class="project-card bg-[#1e1e1e] p-3 rounded-xl shadow-md hover:shadow-lg transition">
+          <img src="https://placehold.co/400x200/0f0f0f/00e038?text=Project+4" alt="Project 4" class="rounded-lg mb-2">
+          <h4 class="font-semibold text-white">Project Placeholder #4</h4>
+          <p class="text-sm text-gray-400">You can add links, GitHub repos, or live previews in this section.</p>
+        </div>
+
+      </div>
+    </div>
+  `,
+  position: { top: '20px', left: '200px' }
+},
+
     'contact': {
         title: 'contact.sh',
         icon: `<svg fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H4.01c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM4 22V4h16v18H4z M12 14l-4-4h8l-4 4z"/></svg>`,
